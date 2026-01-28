@@ -9,7 +9,7 @@ module.exports.config = {
   commandCategory: "Game",
   usages: "",
   cooldowns: 0,
-  triggerWords: ["gf", "single", "kew nai"]
+  triggerWords: ["gf", "single", "kew"]
 };
 
 const girlsData = [
