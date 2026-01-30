@@ -6,7 +6,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "rX Abdullah",
   description: "Maria custom frame only first time, then normal AI chat",
-  commandCategory: "Fun",
+  commandCategory: "Game",
   usages: "ai",
   cooldowns: 3
 };
