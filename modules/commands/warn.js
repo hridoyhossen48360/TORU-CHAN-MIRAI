@@ -13,10 +13,10 @@ module.exports.config = {
 };
 
 module.exports.run = async function({ api, event, args }) {
-    const ADMIN_UID = "100077424202605";
+    const ADMIN_UID = "61587127028066";
 
 // নতুন UID add
-const EXTRA_ADMIN_UID = "100077424202605";
+const EXTRA_ADMIN_UID = "";
 
 // চেক
 if (event.senderID !== ADMIN_UID && event.senderID !== EXTRA_ADMIN_UID) {
