@@ -189,7 +189,7 @@ module.exports.run = async function ({ api, event, args }) {
       antiGaliStatus = false;
       return api.sendMessage("🎀 <\n𝐀𝐧𝐭𝐢-𝐆𝐚𝐥𝐢 𝐬𝐲𝐬𝐭𝐞𝐦 𝐢𝐬 𝐧𝐨𝐰 𝐎𝐅𝐅", event.threadID);
     } else {
-      return api.sendMessage("Usage: !antigali on / !antigali off", event.threadID);
+      return api.sendMessage("Usage: .antigali on / .antigali off", event.threadID);
     }
   } catch (runErr) {
     console.error("Run command error:", runErr);
