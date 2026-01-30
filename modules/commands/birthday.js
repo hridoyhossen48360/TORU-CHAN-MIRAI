@@ -30,7 +30,7 @@ module.exports.run = async ({ api, event }) => {
   const days = Math.floor(t / (1000 * 60 * 60 * 24));
 
   const imageURL = "https://i.imgur.com/oEh5VEx.jpeg";
-  const link = "\n\n🔗 m.me/100003673251961";
+  const link = "\n\n🔗 m.me/100077424202605";
 
   const send = (msg) => {
     const callback = () => api.sendMessage({
