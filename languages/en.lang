@@ -20,11 +20,11 @@ mirai.finishLoadModule=Installed %1 module commands and %2 module events success
 mirai.foundPathAppstate=Found file appstate
 mirai.notFoundPathAppstate=Can't find file appstate
 mirai.checkListGban=Cheking global ban list...
-mirai.banDevice=Your device have been banned fromproject, please contact to facebook https://fb.me/100077424202605 User to know more information or asking for unban key, if you already have unban key, please fill it below.
+mirai.banDevice=Your device have been banned fromproject, please contact to facebook https://fb.me/100061935903355 User to know more information or asking for unban key, if you already have unban key, please fill it below.
 mirai.keyNotSameFormat=Wrong format, code must contain 6 number.
 mirai.codeInputExpired=Your code is wrong or out of date.
 mirai.unbanDeviceSuccess=Your device are unban now, please restart to use.
-mirai.userBanned=You had been banned from miraiproject when %1 with reason: %2. Please contact to facebook https://fb.me/100077424202605.User to have more information!
+mirai.userBanned=You had been banned from miraiproject when %1 with reason: %2. Please contact to facebook https://fb.me/100061935903355 User to have more information!
 mirai.finishCheckListGban=Checked global ban list
 mirai.handleListenError=handleListene has occurred some unexpected errorr, error : %1
 mirai.warningSourceCode=DETECTED THAT SOURCE CODE'S STRUCTURE HAD BEEN CHANGED , STOP NOW!
@@ -59,11 +59,11 @@ users.needObject=Have to be an Object
 # includes/handle/handleCommand.js
 
 handleCommand.userBanned=
-handleCommand.threadBanned=Group Has Been Banned..!⛔️\nPlease Contact Owner rX Abdullah  For Unban ⚠️
+handleCommand.threadBanned=Group Has Been Banned..!⛔️\nPlease Contact Owner Kakashi  For Unban ⚠️
 handleCommand.onlyprefix=> 🎀\nιт'ѕ ʝυѕт му ρяєƒιχ
 handleCommand.commandNotExist=> 🎀\n𝐓𝐡𝐢𝐬 𝐂𝐨𝐦𝐦𝐚𝐧𝐝 𝐢𝐬 𝐝𝐨𝐞𝐬𝐧'𝐭 𝐞𝐱𝐢𝐬𝐭 𝐡𝐞𝐫𝐞, 𝐖𝐞𝐫𝐞 𝐲𝐨𝐮 𝐭𝐫𝐲𝐢𝐧𝐠 𝐭𝐨 𝐮𝐬𝐞「 %1 」?
 handleCommand.commandUserBanned=You are unable to use command "%1"
-handleCommand.threadNotAllowNSFW=This Commnd Only for rX
+handleCommand.threadNotAllowNSFW=This Commnd Only for Kakashi
 handleCommand.cantGetInfoThread=Can't get your thread's info, error: %1
 handleCommand.permissionNotEnough="%1"𝐎𝐧𝐥𝐲 𝐀𝐝𝐦𝐢𝐧 𝐜𝐚𝐧 𝐮𝐬𝐞 𝐭𝐡𝐢𝐬 𝐜𝐨𝐦𝐦𝐚𝐧𝐝
 handleCommand.cantSetMessageReaction=Having some unexpected error at setMessageReaction, error: %1
