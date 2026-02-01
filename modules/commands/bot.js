@@ -21,7 +21,7 @@ function withMarker(text) {
 const sessions = {};
 
 // Maria API endpoint
-const MARIA_API_URL = "https://cyber-ninjas.top/";
+const MARIA_API_URL = "https://raw.githubusercontent.com/rxabdullah0007/rX-apis/main/xApis/rXallApi.json";
 
 // Custom first message replies
 const customReplies = [
