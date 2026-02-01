@@ -11,17 +11,50 @@ module.exports.config = {
 
 module.exports.languages = {
     "en": {
-        "missingInput": "⚠️ 𝗜𝗻𝘃𝗮𝗹𝗶𝗱 𝗕𝗲𝘁!\n━━━━━━━━━━━━━━━\n💡 Enter a valid amount.",
-        "moneyBetNotEnough": "❌ 𝗜𝗻𝘀𝘂𝗳𝗳𝗶𝗰𝗶𝗲𝗻𝘁 𝗕𝗮𝗹𝗮𝗻𝗰𝗲!",
-        "limitBet": "⚠️ 𝗠𝗶𝗻𝗶𝗺𝘂𝗺 𝗕𝗲𝘁: 50$",
+        "missingInput":
+            "╔══════════════╗\n" +
+            " ⚠️ 𝗦𝗟𝗢𝗧 𝗘𝗥𝗥𝗢𝗥\n" +
+            "╚══════════════╝\n" +
+            "❖ Invalid bet amount\n" +
+            "💡 Please enter a valid number",
+
+        "moneyBetNotEnough":
+            "╔══════════════╗\n" +
+            " ❌ 𝗕𝗔𝗟𝗔𝗡𝗖𝗘 𝗟𝗢𝗪\n" +
+            "╚══════════════╝\n" +
+            "💸 You don't have enough coins",
+
+        "limitBet":
+            "╔══════════════╗\n" +
+            " ⚠️ 𝗕𝗘𝗧 𝗟𝗜𝗠𝗜𝗧\n" +
+            "╚══════════════╝\n" +
+            "💰 Minimum bet required: 50$",
+
         "returnWin":
-            "🎉 𝗦𝗟𝗢𝗧 𝗠𝗔𝗖𝗛𝗜𝗡𝗘\n━━━━━━━━━━━━━━━\n🎰 %1 | %2 | %3\n💎 YOU WON!\n💰 Prize: +%4$",
+            "╔══════════════════════╗\n" +
+            " 🎉 𝗦𝗟𝗢𝗧 𝗠𝗔𝗖𝗛𝗜𝗡𝗘 🎉\n" +
+            "╠══════════════════════╣\n" +
+            " 🎰  %1  │  %2  │  %3\n" +
+            "╠══════════════════════╣\n" +
+            " 💎✨ 𝗝𝗔𝗖𝗞𝗣𝗢𝗧 𝗪𝗜𝗡 ✨💎\n" +
+            " 💰 𝗣𝗿𝗶𝘇𝗲:  +%4$\n" +
+            "🔥 Luck is on your side!\n" +
+            "╚══════════════════════╝",
+
         "returnLose":
-            "💔 𝗦𝗟𝗢𝗧 𝗠𝗔𝗖𝗛𝗜𝗡𝗘\n━━━━━━━━━━━━━━━\n🎰 %1 | %2 | %3\n📉 YOU LOST\n💸 Lost: -%4$"
+            "╔══════════════════════╗\n" +
+            " 💔 𝗦𝗟𝗢𝗧 𝗠𝗔𝗖𝗛𝗜𝗡𝗘 💔\n" +
+            "╠══════════════════════╣\n" +
+            " 🎰  %1  │  %2  │  %3\n" +
+            "╠══════════════════════╣\n" +
+            " ☠️ 𝗕𝗘𝗧 𝗟𝗢𝗦𝗧\n" +
+            " 💸 𝗟𝗼𝘀𝘀:  -%4$\n" +
+            "😈 Try again if you dare\n" +
+            "╚══════════════════════╝"
     }
 };
 
-module.exports.run = async function({ api, event, args, Currencies, getText }) {
+module.exports.run = async function ({ api, event, args, Currencies, getText }) {
     const { threadID, messageID, senderID } = event;
     const { getData, increaseMoney, decreaseMoney } = Currencies;
 
@@ -40,14 +73,14 @@ module.exports.run = async function({ api, event, args, Currencies, getText }) {
         return api.sendMessage(getText("moneyBetNotEnough"), threadID, messageID);
 
     // 🎰 Random slots
-    let a = Math.floor(Math.random() * slotItems.length);
-    let b = Math.floor(Math.random() * slotItems.length);
-    let c = Math.floor(Math.random() * slotItems.length);
+    const a = Math.floor(Math.random() * slotItems.length);
+    const b = Math.floor(Math.random() * slotItems.length);
+    const c = Math.floor(Math.random() * slotItems.length);
 
     let win = false;
     let reward = bet;
 
-    // ✅ WIN LOGIC (balanced)
+    // ✅ WIN LOGIC (unchanged)
     if (a === b && b === c) {
         reward = bet * 5; // jackpot
         win = true;
