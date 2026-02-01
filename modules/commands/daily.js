@@ -13,8 +13,8 @@ module.exports.run = async function ({ api, event, Currencies }) {
     const { threadID, messageID, senderID } = event;
 
     const cooldownTime = 24 * 60 * 60 * 1000; // 24 hours
-    const minCoin = 100;
-    const maxCoin = 1000;
+    const minCoin = 1000;
+    const maxCoin = 10000;
 
     const data = await Currencies.getData(senderID);
     const lastClaim = data.data?.dailyTime || 0;
