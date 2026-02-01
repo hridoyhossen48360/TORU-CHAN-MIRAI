@@ -1,6 +1,6 @@
 module.exports.config = {
     name: "uid",
-    version: "1.1.0",
+    version: "1.1.1",
     hasPermssion: 0,
     credits: "Hridoy × Grok",
     description: "Get Facebook User ID (self or mentioned)",
@@ -12,10 +12,10 @@ module.exports.config = {
 module.exports.run = async function ({ api, event }) {
     const { senderID, threadID, messageID, mentions } = event;
 
-    // No mention → own UID
+    // 🔹 If no mention → show own UID
     if (!mentions || Object.keys(mentions).length === 0) {
         return api.sendMessage(
-`╭───❏ 𝗨𝗦𝗘𝗥 𝗜𝗗 ❏───╮
+`╭───❏ 𝗬𝗢𝗨𝗥 𝗨𝗜𝗗 ❏───╮
 │ 👤 You
 │ 🆔 ${senderID}
 ╰──────────────────╯`,
@@ -24,7 +24,7 @@ module.exports.run = async function ({ api, event }) {
         );
     }
 
-    // Mention UID
+    // 🔹 If mention → show mentioned UID(s)
     let msg = "╭───❏ 𝗠𝗘𝗡𝗧𝗜𝗢𝗡 𝗨𝗜𝗗 ❏───╮\n";
 
     for (const id in mentions) {
