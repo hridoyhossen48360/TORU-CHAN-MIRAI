@@ -4,7 +4,7 @@ module.exports.config = {
 	hasPermssion: 0,
 	credits: "Mirai Team",
 	description: "Lấy ID người dùng.",
-	commandCategory: "Công Cụ",
+	commandCategory: "Utility",
 	cooldowns: 5
 };
 
