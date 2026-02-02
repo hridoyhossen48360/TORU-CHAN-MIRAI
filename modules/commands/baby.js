@@ -1,12 +1,12 @@
-Install baby.js const axios = require("axios");
+const axios = require("axios");
 
-let simsim = "";
+let simsim = ""; 
 
 (async () => {
   try {
-    const res = await axios.get("https://raw.githubusercontent.com/rxabdullah0007/rX-apis/main/xApis/rXallApi.json");
-    if (res.data && res.data.baby) {
-      simsim = res.data.baby;
+    const res = await axios.get("https://raw.githubusercontent.com/rxabdullah0007/rX-apis/main/xApis/baseApiUrl.json");
+    if (res.data && res.data.rx) {
+      simsim = res.data.rx;
     }
   } catch {}
 })();
@@ -16,7 +16,7 @@ module.exports.config = {
   version: "1.0.7",
   hasPermssion: 0,
   credits: "rX",
-  description: "AI auto teach with Teach & List  support + Typing effect", //Better then all simsimi
+  description: "AI auto teach with Teach & List  support + Typing effect", //required rx-fca for typing effect
   commandCategory: "chat",
   usages: "[query]",
   cooldowns: 0,
@@ -152,7 +152,7 @@ module.exports.handleEvent = async function ({ api, event, Users }) {
   if (!text || !simsim) return;
 
   const senderName = await Users.getNameUser(event.senderID);
-  const triggers = ["baby", "bby", "xan", "bbz", "toru", "kakashi"];
+  const triggers = ["baby", "bby", "xan", "bbz", "mari", "মারিয়া"];
 
   if (triggers.includes(text)) {
     const replies = [
@@ -168,8 +168,8 @@ module.exports.handleEvent = async function ({ api, event, Users }) {
       "──‎ 𝐇𝐮𝐌..? 👉👈",
       "আম গাছে আম নাই ঢিল কেন মারো, তোমার সাথে প্রেম নাই বেবি কেন ডাকো 😒🐸",
       "কি হলো, মিস টিস করচ্ছো নাকি 🤣",
-      "𝐓𝐫𝐮𝐬𝐭 𝐦𝐞 𝐢𝐚𝐦 𝐭𝐨𝐫𝐮 𝐟𝐫𝐨𝐦 𝐤𝐚𝐤𝐚𝐬𝐡𝐢🧃",
-      "𝑯𝑬𝒀 𝑿𝑨𝑵 𝑰𝑨𝑴 𝑻𝑶𝑹𝑼 𝑩𝑨𝑩𝑼✨"
+      "𝐓𝐫𝐮𝐬𝐭 𝐦𝐞 𝐢𝐚𝐦 𝐦𝐚𝐫𝐢𝐚 🧃",
+      "𝐇ᴇʏ 𝐗ᴀɴ 𝐈’ᴍ 𝐌ᴀ𝐫ɪ𝐚 𝐁ᴀ𝐛𝐲✨"
     ];
     const reply = replies[Math.floor(Math.random() * replies.length)];
 
@@ -193,7 +193,7 @@ module.exports.handleEvent = async function ({ api, event, Users }) {
     });
   }
 
-  const matchPrefix = /^(baby|bby|xan|bbz|toru|kakashi)\s+/i;
+  const matchPrefix = /^(baby|bby|xan|bbz|mari|মারিয়া)\s+/i;
   if (matchPrefix.test(text)) {
     const query = text.replace(matchPrefix, "").trim();
     if (!query) return;
