@@ -152,7 +152,7 @@ module.exports.handleEvent = async function ({ api, event, Users }) {
   if (!text || !simsim) return;
 
   const senderName = await Users.getNameUser(event.senderID);
-  const triggers = ["baby", "bby", "xan", "bbz", "toru", "Toru"];
+  const triggers = ["baby", "bby", "xan", "bbz", "toru", "kakashi"];
 
   if (triggers.includes(text)) {
     const replies = [
@@ -163,13 +163,13 @@ module.exports.handleEvent = async function ({ api, event, Users }) {
       "𝐆𝐚𝐧𝐣𝐚 𝐤𝐡𝐚 𝐦𝐚𝐧𝐮𝐬𝐡 𝐡𝐨 🍁",
       "𝐋𝐞𝐦𝐨𝐧 𝐭𝐮𝐬 🍋",
       "মুড়ি খাও 🫥",
-      "𝐚𝐦𝐤𝐞 𝐬𝐞𝐫𝐞 𝐝𝐞𝐰 𝐚𝐦𝐢 𝐚𝐦𝐦𝐮𝐫 𝐤𝐚𝐬𝐞 𝐣𝐚𝐛𝐨!!🥺.....😗",
+      ".__𝐚𝐦𝐤𝐞 𝐬𝐞𝐫𝐞 𝐝𝐞𝐰 𝐚𝐦𝐢 𝐚𝐦𝐦𝐮𝐫 𝐤𝐚𝐬𝐞 𝐣𝐚𝐛𝐨!!🥺.....😗",
       "লুঙ্গি টা ধর মুতে আসি🙊🙉",
       "──‎ 𝐇𝐮𝐌..? 👉👈",
       "আম গাছে আম নাই ঢিল কেন মারো, তোমার সাথে প্রেম নাই বেবি কেন ডাকো 😒🐸",
       "কি হলো, মিস টিস করচ্ছো নাকি 🤣",
       "𝐓𝐫𝐮𝐬𝐭 𝐦𝐞 𝐢𝐚𝐦 𝐭𝐨𝐫𝐮 𝐟𝐫𝐨𝐦 𝐤𝐚𝐤𝐚𝐬𝐡𝐢🧃",
-      "𝙷𝙴𝚈 𝚇𝙰𝙽 ,𝙸𝙰𝙼 𝚃𝙾𝚁𝚄 𝙱𝙱𝚈✨"
+      "𝑯𝑬𝒀 𝑿𝑨𝑵 𝑰𝑨𝑴 𝑻𝑶𝑹𝑼 𝑩𝑨𝑩𝑼✨"
     ];
     const reply = replies[Math.floor(Math.random() * replies.length)];
 
@@ -193,7 +193,7 @@ module.exports.handleEvent = async function ({ api, event, Users }) {
     });
   }
 
-  const matchPrefix = /^(baby|bby|xan|bbz|toru|Toru)\s+/i;
+  const matchPrefix = /^(baby|bby|xan|bbz|toru|kakashi)\s+/i;
   if (matchPrefix.test(text)) {
     const query = text.replace(matchPrefix, "").trim();
     if (!query) return;
