@@ -14,7 +14,7 @@ module.exports.run = async function ({ api, event }) {
   const fs = global.nodemodule["fs-extra"];
 
   const API_LIST_URL =
-    "https://raw.githubusercontent.com/shahadat-sahu/SAHU-API/refs/heads/main/SAHU-API.json";
+    "https://anime-api-by-sahu.vercel.app";
 
   try {
     const listRes = await axios.get(API_LIST_URL);
