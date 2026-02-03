@@ -15,7 +15,7 @@ module.exports.config = {
   hasPermssion: 2,
   credits: "rX Abdullah",
   description: "Upload local command files to a pastebin service with VIP system.",
-  commandCategory: "Give",
+  commandCategory: "System",
   usages: "[filename] [raw] | vip add | vip list",
   cooldowns: 5
 };
