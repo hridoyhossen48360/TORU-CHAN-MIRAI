@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "Shaon Ahmed",
  description: "ANIME VIDEO",
- commandCategory: "group",
+ commandCategory: "Media",
  usages: "anime video",
  cooldowns: 5,
  dependencies: {
