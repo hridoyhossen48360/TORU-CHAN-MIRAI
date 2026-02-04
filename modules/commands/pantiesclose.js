@@ -2,7 +2,7 @@ module.exports.config = {
   name: "pantiesclose",
   version: "1.0.0",
   premium:true,
-  hasPermssion: 1,
+  hasPermssion: 0,
   credits: "Yae Miko",
   description: "Projec M4a.",
   commandCategory: "nsfw",
