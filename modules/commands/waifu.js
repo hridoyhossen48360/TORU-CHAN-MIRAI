@@ -2,10 +2,10 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 
 module.exports.config = {
   name: "waifu",
-  version: "1.0.2",
+  version: "1.0.3",
   hasPermssion: 0,
-  credits: "waifu.im + Sabah",
-  description: "Random Waifu image",
+  credits: "HRIDOY",
+  description: "Random Waifu image (no tag needed)",
   commandCategory: "Image",
   usages: "",
   cooldowns: 5
@@ -14,23 +14,24 @@ module.exports.config = {
 module.exports.run = async ({ api, event }) => {
   try {
     const apiUrl = 'https://api.waifu.im/search';
-    const tags = ['maid', 'neko', 'smile', 'blush', 'hug']; // random safe tags
-    const tag = tags[Math.floor(Math.random() * tags.length)]; // pick 1 random tag
 
-    const requestUrl = `${apiUrl}?included_tags=${tag}&is_nsfw=false`;
-
-    const res = await fetch(requestUrl);
+    const res = await fetch(apiUrl);
     const data = await res.json();
 
     if (!data.images || data.images.length === 0) {
-      return api.sendMessage("❌ Waifu পাওয়া যায়নি, retry করো", event.threadID);
+      return api.sendMessage("❌ Waifu পাওয়া যায়নি", event.threadID);
     }
 
-    const imageUrl = data.images[0].url;
+    // Random pick
+    const imageData = data.images[Math.floor(Math.random() * data.images.length)];
+    const imageUrl = imageData.url;
+
+    let caption = "✨ Your Waifu ✨";
+    if (imageData.artist) caption += `\n🎨 Artist: ${imageData.artist}`;
 
     return api.sendMessage(
       {
-        body: `✨ Random Waifu (${tag}) ✨`,
+        body: caption,
         attachment: await global.utils.getStreamFromURL(imageUrl)
       },
       event.threadID
