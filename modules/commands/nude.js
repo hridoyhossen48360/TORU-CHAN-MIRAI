@@ -1,6 +1,7 @@
 module.exports.config = {
   name: "nude",
   version: "1.0.0",
+  premium:true,
   hasPermssion: 0,
   credits: "HungCho",
   description: "Random ảnh Nude 18+",
