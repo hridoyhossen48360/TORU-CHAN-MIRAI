@@ -4,7 +4,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: 'MrTomXxX',
   description: 'Set Karne Ke Bad Automatically Msg Send Karega',
-  commandCategory: 'group messenger',
+  commandCategory: 'Utility',
   usages: 'on/off',
   cooldowns: 3
 };
