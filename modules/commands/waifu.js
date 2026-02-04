@@ -1,23 +1,22 @@
-const fetch = require("node-fetch");
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 module.exports.config = {
   name: "waifu",
-  version: "1.0.0",
+  version: "1.0.1",
   hasPermssion: 0,
-  credits: "waifu.im + Script by Sabah",
-  description: "Random waifu image",
-  commandCategory: "nsfw",
+  credits: "waifu.im + Sabah",
+  description: "Random Waifu image",
+  commandCategory: "Image",
   usages: "",
   cooldowns: 5
 };
 
 module.exports.run = async ({ api, event }) => {
   try {
-    const apiUrl = "https://api.waifu.im/search";
-
+    const apiUrl = 'https://api.waifu.im/search';
     const params = {
-      included_tags: ["waifu", "maid", "wifu"],
-      height: ">=2000"
+      included_tags: ['raiden-shogun', 'maid'],
+      height: '>=2000'
     };
 
     const queryParams = new URLSearchParams();
@@ -30,6 +29,7 @@ module.exports.run = async ({ api, event }) => {
     }
 
     const requestUrl = `${apiUrl}?${queryParams.toString()}`;
+
     const res = await fetch(requestUrl);
     const data = await res.json();
 
@@ -41,13 +41,14 @@ module.exports.run = async ({ api, event }) => {
 
     return api.sendMessage(
       {
-        body: "✨ Your Waifu ✨",
+        body: "✨ Random Waifu ✨",
         attachment: await global.utils.getStreamFromURL(imageUrl)
       },
       event.threadID
     );
 
   } catch (err) {
-    api.sendMessage("⚠️ Error: Waifu load করা যায়নি", event.threadID);
+    console.log(err);
+    return api.sendMessage("⚠️ Error: Waifu load করা যায়নি", event.threadID);
   }
 };
