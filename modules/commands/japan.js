@@ -4,6 +4,7 @@ const axios = require("axios")
 module.exports.config = {
   name: "japan",
   version: "1.0.0",
+  premium:true,
   hasPermssion: 0,
   credits: "rX",
   description: "japani girls pp",
