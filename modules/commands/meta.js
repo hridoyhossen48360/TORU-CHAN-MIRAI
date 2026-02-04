@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const { createCanvas, loadImage } = require('canvas');
 
-const API_ENDPOINT = "https://metakexbyneokex.fly.dev/images/generate";
+const API_ENDPOINT = "https://raw.githubusercontent.com/noobcore404/NC-STORE/main/NCApiUrl.json";
 
 module.exports.config = {
     name: "meta",
