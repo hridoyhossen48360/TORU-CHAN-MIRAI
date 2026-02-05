@@ -8,7 +8,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "mirai-team",
   description: "Slap the friend you mention",
-  commandCategory: "Image",
+  commandCategory: "Tag Fun",
   usages: "@tag",
   cooldowns: 5,
   dependencies: {

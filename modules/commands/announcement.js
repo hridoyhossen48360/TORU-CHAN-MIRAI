@@ -56,11 +56,11 @@ module.exports.run = async ({ api, event, args }) => {
 
   if (input) {
     msg =
-`╭───────── [ ${title} ] ───────────╮
+`╭─[ ${title} ]─╮
 
 ${input}
 
-╰────────────────────────────╯`;
+╰────────────────────────╯`;
   }
 
   try {

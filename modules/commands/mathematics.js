@@ -4,7 +4,7 @@ module.exports.config = {
 	hasPermssion: 0,
 	credits: "rX",
 	description: "Game",
-	commandCategory: "Study, learn more, learn forever",
+	commandCategory: "Game",
 	cooldowns: 0
 };
 

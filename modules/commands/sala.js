@@ -4,7 +4,7 @@ module.exports.config = {
     hasPermssion: 0,
     credits: "Modified by rX Abdullah",
     description: "Tui amar sala bonding photo edit",
-    commandCategory: "Image",
+    commandCategory: "Tag Fun",
     usages: "[tag]",
     cooldowns: 5,
     dependencies: {

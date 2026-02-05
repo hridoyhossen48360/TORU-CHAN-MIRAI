@@ -3,7 +3,7 @@ const fs = require("fs");
 
 const baseApiUrl = async () => {
   const base = await axios.get(
-    `https://raw.githubusercontent.com/rummmmna21/rx-api/main/baseApiUrl.json`
+    `https://raw.githubusercontent.com/rxabdullah0007/rX-apis/main/xApis/rXallApi.json`
   );
   return base.data.api;
 };
@@ -16,7 +16,7 @@ module.exports.config = {
   countDown: 5,
   hasPermssion: 0,
   description: "Download audio from YouTube (auto first result)",
-  commandCategory: "AI",
+  commandCategory: "Media",
   usages: "{pn} [song name or YouTube link]",
 };
 

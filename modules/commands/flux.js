@@ -6,7 +6,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "Dipto",
  description: "Flux Image Generator",
- commandCategory: "Ai",
+ commandCategory: "AI",
  usage: "{pn} [prompt] --ratio 1024x1024\n{pn} [prompt]",
  countDown: 15,
 };

@@ -1,12 +1,12 @@
 const axios = require("axios");
 
-let simsim = "";
+let simsim = ""; 
 
 (async () => {
   try {
-    const res = await axios.get("https://raw.githubusercontent.com/rxabdullah0007/rX-apis/main/xApis/rXallApi.json");
-    if (res.data && res.data.baby) {
-      simsim = res.data.baby;
+    const res = await axios.get("https://raw.githubusercontent.com/rxabdullah0007/rX-apis/main/xApis/baseApiUrl.json");
+    if (res.data && res.data.rx) {
+      simsim = res.data.rx;
     }
   } catch {}
 })();
@@ -16,8 +16,8 @@ module.exports.config = {
   version: "1.0.7",
   hasPermssion: 0,
   credits: "rX",
-  description: "AI auto teach with Teach & List  support + Typing effect", //Better then all simsimi
-  commandCategory: "Admin",
+  description: "AI auto teach with Teach & List  support + Typing effect", //required rx-fca for typing effect
+  commandCategory: "Group",
   usages: "[query]",
   cooldowns: 0,
   prefix: false
@@ -44,7 +44,7 @@ module.exports.run = async function ({ api, event, args, Users }) {
     if (args[0] === "list") {
       const res = await axios.get(`${simsim}/list`);
       return api.sendMessage(
-        `╭─╼🌟 𝐁𝐚𝐛𝐲 𝐀𝐈 𝐒𝐭𝐚𝐭𝐮𝐬\n├ 📝 𝐓𝐞𝐚𝐜𝐡𝐞𝐝 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: ${res.data.totalQuestions}\n├ 📦 𝐒𝐭𝐨𝐫𝐞𝐝 𝐑𝐞𝐩𝐥𝐢𝐞𝐬: ${res.data.totalReplies}\n╰─╼👤 𝐃𝐞𝐯𝐞𝐥𝐨𝐩𝐞𝐫:𝐊𝐚𝐤𝐚𝐬𝐡𝐢`,
+        `╭─╼🌟 𝐁𝐚𝐛𝐲 𝐀𝐈 𝐒𝐭𝐚𝐭𝐮𝐬\n├ 📝 𝐓𝐞𝐚𝐜𝐡𝐞𝐝 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: ${res.data.totalQuestions}\n├ 📦 𝐒𝐭𝐨𝐫𝐞𝐝 𝐑𝐞𝐩𝐥𝐢𝐞𝐬: ${res.data.totalReplies}\n╰─╼👤 𝐃𝐞𝐯𝐞𝐥𝐨𝐩𝐞𝐫: 𝐫𝐗 𝐀𝐛𝐝𝐮𝐥𝐥𝐚𝐡`,
         event.threadID,
         event.messageID
       );
@@ -52,7 +52,7 @@ module.exports.run = async function ({ api, event, args, Users }) {
 
     if (args[0] === "msg") {
       const trigger = args.slice(1).join(" ").trim();
-      if (!trigger) return api.sendMessage("❌ | Use:.baby msg [trigger]", event.threadID, event.messageID);
+      if (!trigger) return api.sendMessage("❌ | Use: !baby msg [trigger]", event.threadID, event.messageID);
 
       const res = await axios.get(`${simsim}/simsimi-list?ask=${encodeURIComponent(trigger)}`);
       if (!res.data.replies || res.data.replies.length === 0) {
@@ -152,7 +152,7 @@ module.exports.handleEvent = async function ({ api, event, Users }) {
   if (!text || !simsim) return;
 
   const senderName = await Users.getNameUser(event.senderID);
-  const triggers = ["baby", "bby", "xan", "bbz", "mari", "মারিয়া"];
+  const triggers = ["baby", "bby", "xan", "bbz", "toru", "kakashi"];
 
   if (triggers.includes(text)) {
     const replies = [
@@ -163,13 +163,13 @@ module.exports.handleEvent = async function ({ api, event, Users }) {
       "𝐆𝐚𝐧𝐣𝐚 𝐤𝐡𝐚 𝐦𝐚𝐧𝐮𝐬𝐡 𝐡𝐨 🍁",
       "𝐋𝐞𝐦𝐨𝐧 𝐭𝐮𝐬 🍋",
       "মুড়ি খাও 🫥",
-      ".__𝐚𝐦𝐤𝐞 𝐬𝐞𝐫𝐞 𝐝𝐞𝐰 𝐚𝐦𝐢 𝐚𝐦𝐦𝐮𝐫 𝐤𝐚𝐬𝐞 𝐣𝐚𝐛𝐨!!🥺.....😗",
+      "𝐚𝐦𝐤𝐞 𝐬𝐞𝐫𝐞 𝐝𝐞𝐰 𝐚𝐦𝐢 𝐚𝐦𝐦𝐮𝐫 𝐤𝐚𝐬𝐞 𝐣𝐚𝐛𝐨!!🥺.....😗",
       "লুঙ্গি টা ধর মুতে আসি🙊🙉",
       "──‎ 𝐇𝐮𝐌..? 👉👈",
       "আম গাছে আম নাই ঢিল কেন মারো, তোমার সাথে প্রেম নাই বেবি কেন ডাকো 😒🐸",
       "কি হলো, মিস টিস করচ্ছো নাকি 🤣",
-      "𝐓𝐫𝐮𝐬𝐭 𝐦𝐞 𝐢𝐚𝐦 𝐤𝐚𝐤𝐚𝐬𝐡𝐢'𝐬 𝐭𝐨𝐫𝐮 🧃",
-      "𝐇ᴇʏ 𝐗ᴀɴ 𝐈’ᴍ 𝐓𝐨𝐫𝐮 𝐁ᴀ𝐛𝐲 𝐟𝐫𝐨𝐦 𝐤𝐚𝐤𝐚𝐬𝐡𝐢✨"
+      "𝐓𝐫𝐮𝐬𝐭 𝐦𝐞 𝐢𝐚𝐦 𝐭𝐨𝐫𝐮 𝐟𝐫𝐨𝐦 𝐤𝐚𝐤𝐚𝐬𝐡𝐢🧃",
+      "𝗛𝗲𝘆 𝘅𝗮𝗻 𝗶𝗮𝗺 𝘁𝗼𝗿𝘂 𝗰𝗵𝗮𝗻✨"
     ];
     const reply = replies[Math.floor(Math.random() * replies.length)];
 
@@ -193,7 +193,7 @@ module.exports.handleEvent = async function ({ api, event, Users }) {
     });
   }
 
-  const matchPrefix = /^(baby|bby|xan|bbz|kakashi|toru)\s+/i;
+  const matchPrefix = /^(baby|bby|xan|bbz|toru|kakashi)\s+/i;
   if (matchPrefix.test(text)) {
     const query = text.replace(matchPrefix, "").trim();
     if (!query) return;

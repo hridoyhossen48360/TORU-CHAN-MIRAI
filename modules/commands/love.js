@@ -5,7 +5,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Islamick Chat",
   description: "story VEDIO",
-  commandCategory: "Image",
+  commandCategory: "Media",
   usages: "love7 vedio",
   cooldowns: 5,
   dependencies: {

@@ -9,7 +9,7 @@ module.exports.config = {
   usePrefix: true,
   description: "Paged help menu with progress animation + GIF + auto unsend",
   commandCategory: "System",
-  usages: "[command name | page number]",
+  usages: "[command name]",
   cooldowns: 5,
 };
 
@@ -98,22 +98,14 @@ module.exports.run = async function ({ api, event, args }) {
       }, event.messageID);
     }
 
-    // ---------- PAGINATION ----------
-    const cmdsPerPage = 25;
-    const totalPages = Math.ceil(commands.length / cmdsPerPage);
-    const page = Math.max(1, Math.min(parseInt(args[0]) || 1, totalPages));
-
-    const start = (page - 1) * cmdsPerPage;
-    const end = start + cmdsPerPage;
-    const pageCommands = commands.slice(start, end);
-
+    // ---------- SHOW ALL CATEGORIES WITH ALL COMMANDS ----------
     const categories = {};
-    for (let cmd of pageCommands) {
+    for (let cmd of commands) {
       if (!categories[cmd.category]) categories[cmd.category] = [];
       categories[cmd.category].push(cmd.name);
     }
 
-    let msg = `╭──❏ 𝐀𝐮𝐭𝐨 𝐃𝐞𝐭𝐞𝐜𝐭 𝐇𝐞𝐥𝐩 - Page ${page}/${totalPages} ❏──╮\n`;
+    let msg = `╭──❏ 𝐀𝐮𝐭𝐨 𝐃𝐞𝐭𝐞𝐜𝐭 𝐇𝐞𝐥𝐩 ❏──╮\n`;
     msg += `│ ✧ Total Commands: ${commands.length}\n`;
     msg += `│ ✧ Prefix: ${global.config.PREFIX}\n`;
     msg += `╰─────────────────────⭓\n\n`;
@@ -132,7 +124,6 @@ module.exports.run = async function ({ api, event, args }) {
     msg += `╭─[⋆˚🦋k̶a̶k̶a̶s̶h̶i̶X̶t̶o̶r̶u̶🎀⋆˚]\n`;
     msg += `╰‣ 𝐀𝐝𝐦𝐢𝐧 : 𝐊𝐚𝐤𝐚𝐬𝐡𝐢 𝐇𝐚𝐭𝐚𝐤𝐞\n`;
     msg += `╰‣ 𝐑𝐢𝐩𝐨𝐫𝐭 : .callad (yourmsg)\n`;
-    msg += `╰‣ 𝐓𝐲𝐩𝐞 !help ${page + 1} 𝐟𝐨𝐫 𝐧𝐞𝐱𝐭 𝐩𝐚𝐠𝐞\n`;
 
     // ---------- GIF ----------
     let attachment = null;

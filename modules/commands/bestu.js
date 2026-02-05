@@ -4,7 +4,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: " Priyansh Rajput", 
   description: "Get Pair From Mention",
-  commandCategory: "Image",
+  commandCategory: "Tag Fun",
   usages: "[@mention]",
   cooldowns: 5, 
   dependencies: {

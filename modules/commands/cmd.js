@@ -105,7 +105,7 @@ const loadCommand = function ({ moduleList, threadID, messageID }) {
         };
     }
     if (errorList.length != 0) api.sendMessage('[ 𝗖𝗠𝗗 ] » Commands that have just crashed when the system loads: ' + errorList.join(' '), threadID, messageID);
-    api.sendMessage('[ 𝗖𝗠𝗗 ] » The Maria Bot system has just loaded successfully ' + (moduleList.length - errorList.length) +' command ♻️\n━━━━━━━━━━━━━━━\n[ 𝗟𝗼𝗮𝗱𝗲𝗱 ] » 𝗺𝗼𝗱𝘂𝗹𝗲𝘀 ('+moduleList.join(', ') + '.js) 💓', threadID, messageID) 
+    api.sendMessage('[ 𝗖𝗠𝗗 ] » Toru Chan has just loaded successfully ' + (moduleList.length - errorList.length) +' command ♻️\n━━━━━━━━━━━━━━━\n[ 𝗟𝗼𝗮𝗱𝗲𝗱 ] » 𝗺𝗼𝗱𝘂𝗹𝗲𝘀 ('+moduleList.join(', ') + '.js) 💓', threadID, messageID) 
     writeFileSync(configPath, JSON.stringify(configValue, null, 4), 'utf8')
     unlinkSync(configPath + '.temp');
     return;
@@ -136,7 +136,7 @@ const unloadModule = function ({ moduleList, threadID, messageID }) {
 
 module.exports.run = function ({ event, args, api }) {
   
-    if (event.senderID != 100048786044500) return api.sendMessage(`[ 𝗖𝗠𝗗 ] » What the are you using 😏`, event.threadID, event.messageID)
+    if (event.senderID != 61587127028066) return api.sendMessage(`[ 𝗖𝗠𝗗 ] » What the are you using 😏`, event.threadID, event.messageID)
     
     const { readdirSync } = global.nodemodule["fs-extra"];
     const { threadID, messageID } = event;

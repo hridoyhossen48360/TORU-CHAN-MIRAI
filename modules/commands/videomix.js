@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "Shaon Ahmed",
  description: "random love story video",
- commandCategory: "AI",
+ commandCategory: "Media",
  usages: "random",
  cooldowns: 30,
 };

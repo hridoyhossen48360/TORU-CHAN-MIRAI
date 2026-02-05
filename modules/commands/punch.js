@@ -8,7 +8,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Kaneki",
   description: "Punch a tagged friend",
-  commandCategory: "Fun",
+  commandCategory: "Tag Fun",
   usages: "[tag]",
   cooldowns: 5,
 };

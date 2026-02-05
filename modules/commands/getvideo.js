@@ -19,7 +19,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "rX Abdullah",
   description: "Send random pixeldrain video",
-  commandCategory: "Image",
+  commandCategory: "Media",
   usages: "",
   cooldowns: 3
 };

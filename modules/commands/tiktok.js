@@ -20,7 +20,7 @@ module.exports.config = {
   credits: "rX", //api by Neoaz ゐ
   hasPermssion: 0,
   description: "Search & download TikTok video",
-  commandCategory: "Image",
+  commandCategory: "Media",
   usages: "tiktok <keyword>",
   cooldowns: 5
 };

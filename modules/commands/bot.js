@@ -6,7 +6,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "rX Abdullah",
   description: "Maria custom frame only first time, then normal AI chat",
-  commandCategory: "Fun",
+  commandCategory: "Utility",
   usages: "ai",
   cooldowns: 3
 };
@@ -21,7 +21,7 @@ function withMarker(text) {
 const sessions = {};
 
 // Maria API endpoint
-const MARIA_API_URL = "https://maria-languages-model.onrender.com/api/chat";
+const MARIA_API_URL = "https://raw.githubusercontent.com/rxabdullah0007/rX-apis/main/xApis/rXallApi.json";
 
 // Custom first message replies
 const customReplies = [

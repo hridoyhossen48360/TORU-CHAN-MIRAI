@@ -70,7 +70,7 @@ module.exports.run = async function ({ api, event }) {
   const { threadID, messageID, senderID, mentions, type, messageReply } = event;
 
   if (global.creditChanged) {
-    api.sendMessage("⚡️ Credit was changed respect rX Abdullah", threadID);
+    api.sendMessage("⚡️ Credit was changed respect Kakashi", threadID);
     global.creditChanged = false;
   }
 
