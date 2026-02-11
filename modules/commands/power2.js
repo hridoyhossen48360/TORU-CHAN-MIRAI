@@ -1,5 +1,5 @@
 module.exports.config = {
-    name: "Power2",
+    name: "power2",
     version: "4.1.0",
     hasPermssion: 2,
     credits: "Kakashi",
