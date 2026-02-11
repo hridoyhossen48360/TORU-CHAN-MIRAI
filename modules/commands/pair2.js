@@ -1,10 +1,10 @@
 module.exports.config = {
- name: "pair1",
+ name: "pair2",
  version: "1.0.1",
  hasPermssion: 0,
  credits: "rX",
  description: "Pair two users with a fun compatibility score",
- commandCategory: "Image",
+ commandCategory: "Tag Fun",
  cooldowns: 5,
  dependencies: {
  "axios": "",
