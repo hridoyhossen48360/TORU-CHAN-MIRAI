@@ -1,9 +1,9 @@
 module.exports.config = {
-    name: "kiss",
-    version: "7.3.1",
+    name: "married4",
+    version: "3.1.1",
     hasPermssion: 0,
     credits: "𝙈𝙧𝙏𝙤𝙢𝙓𝙭𝙓",
-    description: "kiss",
+    description: "married",
     commandCategory: "Tag Fun",
     usages: "[@mention]",
     cooldowns: 5,
@@ -20,9 +20,9 @@ module.exports.onLoad = async() => {
     const { existsSync, mkdirSync } = global.nodemodule["fs-extra"];
     const { downloadFile } = global.utils;
     const dirMaterial = __dirname + `/cache/canvas/`;
-    const path = resolve(__dirname, 'cache/canvas', 'kissv3.png');
+    const path = resolve(__dirname, 'cache/canvas', 'marriedv5.png');
     if (!existsSync(dirMaterial + "canvas")) mkdirSync(dirMaterial, { recursive: true });
-    if (!existsSync(path)) await downloadFile("https://i.imgur.com/3laJwc1.jpg", path);
+    if (!existsSync(path)) await downloadFile("https://i.ibb.co/mhxtgwm/49be174dafdc259030f70b1c57fa1c13.jpg", path);
 }
 
 async function makeImage({ one, two }) {
@@ -32,7 +32,7 @@ async function makeImage({ one, two }) {
     const jimp = global.nodemodule["jimp"];
     const __root = path.resolve(__dirname, "cache", "canvas");
 
-    let batgiam_img = await jimp.read(__root + "/kissv3.png");
+    let batgiam_img = await jimp.read(__root + "/marriedv5.png");
     let pathImg = __root + `/batman${one}_${two}.png`;
     let avatarOne = __root + `/avt_${one}.png`;
     let avatarTwo = __root + `/avt_${two}.png`;
@@ -45,7 +45,7 @@ async function makeImage({ one, two }) {
     
     let circleOne = await jimp.read(await circle(avatarOne));
     let circleTwo = await jimp.read(await circle(avatarTwo));
-    batgiam_img.composite(circleOne.resize(350, 350), 200, 300).composite(circleTwo.resize(350, 350), 600, 80);
+    batgiam_img.composite(circleOne.resize(130, 130), 300, 150).composite(circleTwo.resize(130, 130), 170, 230);
     
     let raw = await batgiam_img.getBufferAsync("image/png");
     

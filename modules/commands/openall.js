@@ -2,13 +2,13 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports.config = {
-  name: "help",
-  version: "5.0.0",
-  hasPermssion: 0,
-  credits: "rX + Modified by KakashiXtoru",
+  name: "openall",
+  version: "4.6.0",
+  hasPermssion: 2,
+  credits: "rX",
   usePrefix: true,
-  description: "Advanced Custom Category Help Menu",
-  commandCategory: "System",
+  description: "Paged help menu with progress animation + GIF + auto unsend",
+  commandCategory: "Admin",
   usages: "[command name]",
   cooldowns: 5,
 };
@@ -16,36 +16,7 @@ module.exports.config = {
 module.exports.run = async function ({ api, event, args }) {
   try {
 
-    // ==============================
-    // ⚙️ CUSTOM CATEGORY CONTROL
-    // ==============================
-
-    // 👉 Only these categories will show (leave empty = show all)
-    const VISIBLE_CATEGORIES = [
-      "AI",
-      "Game",
-      "Group",
-      "Media",
-      "Image",
-      "Utility",
-      "Tag Fun",
-      "img"
-    ];
-
-    // 👉 These categories will NEVER show
-    const HIDDEN_CATEGORIES = [
-      "Admin",
-      "nsfw",
-      "noprefix",
-      "System",
-      "Picture",
-      "video Convert Audio",
-    ];
-
-    // ==============================
-    // 🔄 LOADING ANIMATION
-    // ==============================
-
+    // ---------- PROGRESS BAR ANIMATION ----------
     const frames = [
       "█░░░░░░░░░ 10%",
       "███░░░░░░░ 30%",
@@ -68,20 +39,15 @@ module.exports.run = async function ({ api, event, args }) {
       );
     }
 
-    // ==============================
-    // 📂 LOAD COMMANDS
-    // ==============================
-
+    // ---------- LOAD COMMANDS ----------
     const commandDir = __dirname;
     const files = fs.readdirSync(commandDir).filter(f => f.endsWith(".js"));
 
     let commands = [];
-
     for (let file of files) {
       try {
         const cmd = require(path.join(commandDir, file));
         if (!cmd.config) continue;
-
         commands.push({
           name: cmd.config.name || file.replace(".js", ""),
           aliases: cmd.config.aliases || [],
@@ -89,24 +55,17 @@ module.exports.run = async function ({ api, event, args }) {
           description: cmd.config.description || "No description available.",
           author: cmd.config.credits || "Unknown",
           version: cmd.config.version || "N/A",
-          usages: cmd.config.usages || "",
-          cooldowns: cmd.config.cooldowns || 0,
+          usages: cmd.config.usages || "No usage info",
+          cooldowns: cmd.config.cooldowns || "N/A",
         });
       } catch {}
     }
 
-    // ==============================
-    // 📘 COMMAND DETAIL MODE
-    // ==============================
-
+    // ---------- COMMAND DETAIL ----------
     if (args[0] && isNaN(args[0])) {
-
       const find = args[0].toLowerCase();
-
       const cmd = commands.find(
-        c =>
-          c.name.toLowerCase() === find ||
-          c.aliases.map(a => a.toLowerCase()).includes(find)
+        c => c.name.toLowerCase() === find || c.aliases.includes(find)
       );
 
       await api.unsendMessage(loading.messageID);
@@ -131,73 +90,45 @@ module.exports.run = async function ({ api, event, args }) {
       msg += `📗 Usage: ${global.config.PREFIX}${cmd.name} ${cmd.usages}`;
 
       return api.sendMessage(msg, event.threadID, (e, i) => {
-        if (!e) setTimeout(() => api.unsendMessage(i.messageID), 20000);
+        if (!e) setTimeout(() => api.unsendMessage(i.messageID), 15000);
       }, event.messageID);
     }
 
-    // ==============================
-    // 📂 CATEGORY FILTER SYSTEM
-    // ==============================
-
+    // ---------- SHOW ALL CATEGORIES WITH ALL COMMANDS ----------
     const categories = {};
-
     for (let cmd of commands) {
-
-      // ❌ Skip hidden
-      if (HIDDEN_CATEGORIES.includes(cmd.category)) continue;
-
-      // ✅ If visible list exists → only allow those
-      if (VISIBLE_CATEGORIES.length &&
-          !VISIBLE_CATEGORIES.includes(cmd.category)) continue;
-
-      if (!categories[cmd.category])
-        categories[cmd.category] = [];
-
+      if (!categories[cmd.category]) categories[cmd.category] = [];
       categories[cmd.category].push(cmd.name);
     }
 
-    // ==============================
-    // 📜 BUILD HELP MESSAGE
-    // ==============================
-
-    let msg = `╭──❏ 𝐂𝐮𝐬𝐭𝐨𝐦 𝐇𝐞𝐥𝐩 𝐌𝐞𝐧𝐮 ❏──╮\n`;
+    let msg = `╭──❏ 𝐀𝐮𝐭𝐨 𝐃𝐞𝐭𝐞𝐜𝐭 𝐇𝐞𝐥𝐩 ❏──╮\n`;
     msg += `│ ✧ Total Commands: ${commands.length}\n`;
     msg += `│ ✧ Prefix: ${global.config.PREFIX}\n`;
     msg += `╰─────────────────────⭓\n\n`;
 
     for (let [cat, cmds] of Object.entries(categories)) {
-
       msg += `╭─‣ 𝗖𝗮𝘁𝗲𝗴𝗼𝗿𝘆 : ${cat}\n`;
-
       for (let i = 0; i < cmds.length; i += 2) {
         const row = [`「${cmds[i]}」`];
-        if (cmds[i + 1])
-          row.push(`✘ 「${cmds[i + 1]}」`);
-
+        if (cmds[i + 1]) row.push(`✘ 「${cmds[i + 1]}」`);
         msg += `├‣ ${row.join(" ")}\n`;
       }
-
       msg += `╰────────────◊\n\n`;
     }
 
-    msg += `⭔ Type ${global.config.PREFIX}help [command]\n`;
+    msg += `⭔ Type ${global.config.PREFIX}help [command] to see details\n`;
     msg += `╭─[⋆˚🦋k̶a̶k̶a̶s̶h̶i̶X̶t̶o̶r̶u̶🎀⋆˚]\n`;
-    msg += `╰‣ Admin : Kakashi Hatake\n`;
-    msg += `╰‣ Report : .callad (yourmsg)\n`;
+    msg += `╰‣ 𝐀𝐝𝐦𝐢𝐧 : 𝐊𝐚𝐤𝐚𝐬𝐡𝐢 𝐇𝐚𝐭𝐚𝐤𝐞\n`;
+    msg += `╰‣ 𝐑𝐢𝐩𝐨𝐫𝐭 : .callad (yourmsg)\n`;
 
-    // ==============================
-    // 🎞 RANDOM GIF
-    // ==============================
-
+    // ---------- GIF ----------
     let attachment = null;
     const cache = path.join(__dirname, "noprefix");
-
     if (fs.existsSync(cache)) {
       const allow = [".gif", ".mp4", ".png", ".jpg", ".webp"];
       const list = fs.readdirSync(cache).filter(f =>
         allow.includes(path.extname(f).toLowerCase())
       );
-
       if (list.length)
         attachment = fs.createReadStream(
           path.join(cache, list[Math.floor(Math.random() * list.length)])
@@ -205,9 +136,8 @@ module.exports.run = async function ({ api, event, args }) {
     }
 
     await api.unsendMessage(loading.messageID);
-
     api.sendMessage({ body: msg, attachment }, event.threadID, (e, i) => {
-      if (!e) setTimeout(() => api.unsendMessage(i.messageID), 20000);
+      if (!e) setTimeout(() => api.unsendMessage(i.messageID), 15000);
     }, event.messageID);
 
   } catch (err) {
