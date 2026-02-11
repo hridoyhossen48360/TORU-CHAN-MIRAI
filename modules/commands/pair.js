@@ -4,7 +4,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "rX Abdullah", //don't change my credit
   description: "Pair two users with a fun compatibility score",
-  commandCategory: "Image",
+  commandCategory: "Tag Fun",
   cooldowns: 5,
   dependencies: {
     "axios": "",
