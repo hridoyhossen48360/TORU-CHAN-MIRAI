@@ -23,13 +23,9 @@ module.exports.handleEvent = async function ({ api, event }) {
     // ---------- PROGRESS BAR ANIMATION ----------
     const progress = [
       "█░░░░░░░░░ 10%",
-      "██░░░░░░░░ 20%",
       "███░░░░░░░ 30%",
-      "████░░░░░░ 40%",
       "█████░░░░░ 50%",
-      "██████░░░░ 60%",
       "███████░░░ 70%",
-      "████████░░ 80%",
       "█████████░ 90%",
       "██████████ 100% ✨"
     ];
@@ -97,7 +93,9 @@ module.exports.handleEvent = async function ({ api, event }) {
     const gifList = [
       "abdullah2.gif",
       "abdullah1.gif",
-      "abdullah3.gif"
+      "abdullah3.gif",
+      "abdullah4.gif",
+      "abdullah5.gif"
     ];
 
     const randomGif = gifList[Math.floor(Math.random() * gifList.length)];
