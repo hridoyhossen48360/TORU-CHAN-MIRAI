@@ -1,114 +1,124 @@
+const axios = require("axios");
+const fs = require("fs-extra");
+const path = require("path");
+const FormData = require("form-data");
 
-require('dotenv').config();
-const login = require("facebook-chat-api");
-const axios = require('axios');
-const fs = require('fs-extra');  // better fs with promises
-const path = require('path');
-const Queue = require('queue');  // simple queue for handling multiple gen requests
+const BASE_URL = "https://midjanuarybyxnil.onrender.com";
 
-const PREFIX = process.env.PREFIX || '!';
-const API_URL = "https://midjanuarybyxnil.onrender.com/generate";  // Adjust if endpoint different
-const TEMP_DIR = path.join(__dirname, 'temp_images');
-fs.ensureDirSync(TEMP_DIR);  // Create temp dir if not exists
+module.exports = {
+  config: {
+    name: "mj",
+    version: "3.1",
+    credits: "Hridoy x Fixed by Grok",
+    hasPermssion: 0,
+    countDown: 10,          // barano karon server slow
+    commandCategory: "AI",
+    usages: ".mj <prompt>   or   .mj <prompt> --ar 16:9",
+    cooldown: 15,
+    dependencies: {
+      "axios": "^1.7.2",
+      "fs-extra": "^11.2.0",
+      "form-data": "^4.0.0"
+    }
+  },
 
-// Queue setup: concurrency 1 to avoid overloading free server
-const genQueue = new Queue({ concurrency: 1, autostart: true });
+  run: async function ({ api, event, args }) {
+    const { threadID, messageID } = event;
+    let prompt = args.join(" ").trim();
 
-// Parse args for advanced options
-function parsePromptArgs(input) {
-    let prompt = input;
-    let negative_prompt = '';
-    let aspect_ratio = '1:1';  // default square
-    let width = 1024, height = 1024;
-
-    const negMatch = input.match(/--negative\s+(.+?)(?=\s--|$)/i);
-    if (negMatch) {
-        negative_prompt = negMatch[1].trim();
-        prompt = prompt.replace(negMatch[0], '');
+    if (!prompt) {
+      return api.sendMessage(
+        "❌ Prompt dite bhule gecho!\nExample:\n.mj cyberpunk samurai neon lights\n.mj beautiful landscape --ar 16:9",
+        threadID,
+        messageID
+      );
     }
 
-    const arMatch = input.match(/--ar\s+([\d:]+)/i);
+    // Optional simple arg parsing (ar / aspect ratio)
+    let width = 1024;
+    let height = 1024;
+    const arMatch = prompt.match(/--ar\s+([\d:]+)/i);
     if (arMatch) {
-        aspect_ratio = arMatch[1];
-        prompt = prompt.replace(arMatch[0], '');
-        const [w, h] = aspect_ratio.split(':').map(Number);
-        width = 512 * w;  // scale up, but cap for free tier
-        height = 512 * h;
-        width = Math.min(width, 2048);
-        height = Math.min(height, 2048);
+      const ratio = arMatch[1];
+      prompt = prompt.replace(arMatch[0], "").trim();
+      const [w, h] = ratio.split(":").map(Number);
+      if (w && h) {
+        width = Math.round(1024 * (w / h));
+        height = 1024;
+        if (width > 1536 || height > 1536) { // cap for free server
+          width = 1024;
+          height = 1024;
+        }
+      }
     }
 
-    return { prompt: prompt.trim(), negative_prompt, width, height };
-}
+    const loadingMsg = await api.sendMessage("🎨 MidJanuary generating... (20-120 sec lagte pare)", threadID);
 
-// Generate image function
-async function generateImage(options) {
-    const { prompt, negative_prompt, width, height } = options;
+    const cacheDir = path.join(__dirname, "cache");
+    await fs.ensureDir(cacheDir);
+    const imgPath = path.join(cacheDir, `\( {Date.now()}_ \){threadID}.png`);
+
     try {
-        const response = await axios.post(API_URL, {
-            prompt,
-            negative_prompt,
-            width,
-            height,
-            steps: 30,  // configurable if needed
-            guidance_scale: 7.5,
-            seed: -1
-        }, {
-            headers: { 'Content-Type': 'application/json' },
-            responseType: 'arraybuffer'  // assuming binary image
+      // ------------------ Try 1: multipart/form-data (browser-like) ------------------
+      let response;
+      try {
+        const form = new FormData();
+        form.append("prompt", prompt);
+        // Optional: add more if site supports
+        // form.append("width", width);
+        // form.append("height", height);
+
+        response = await axios.post(BASE_URL, form, {
+          headers: {
+            ...form.getHeaders(),
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+          },
+          responseType: "arraybuffer",
+          timeout: 180000 // 3 minutes
         });
+      } catch (multipartErr) {
+        console.log("[Multipart failed]", multipartErr.message);
+      }
 
-        const tempFile = path.join(TEMP_DIR, `img_${Date.now()}.png`);
-        await fs.writeFile(tempFile, response.data);
-        return tempFile;
-    } catch (error) {
-        console.error("Gen error:", error.message);
-        if (error.response) console.log("Response:", error.response.status, error.response.data?.toString());
-        throw new Error("Generation failed");
+      // ------------------ Try 2: JSON POST to /generate (common fallback) ------------------
+      if (!response || !response.data || response.data.byteLength < 1000) {
+        console.log("Trying JSON /generate...");
+        response = await axios.post(`${BASE_URL}/generate`, {
+          prompt: prompt,
+          width: width,
+          height: height,
+          steps: 30,
+          guidance_scale: 7.5
+        }, {
+          headers: { "Content-Type": "application/json" },
+          responseType: "arraybuffer",
+          timeout: 180000
+        });
+      }
+
+      if (!response.data || response.data.byteLength < 5000) {
+        throw new Error("Empty or invalid image response");
+      }
+
+      await fs.writeFile(imgPath, response.data);
+
+      await api.unsendMessage(loadingMsg.messageID);
+
+      await api.sendMessage({
+        body: `✨ Generated Successfully!\n\nPrompt: \( {prompt} \){arMatch ? `\nAspect Ratio: ${arMatch[1]}` : ""}\n\nPowered by MidJanuary`,
+        attachment: fs.createReadStream(imgPath)
+      }, threadID);
+
+    } catch (err) {
+      console.error("MJ ERROR:", err.message, err?.response?.status);
+      let errMsg = "❌ Generation failed.\nPossible reasons:\n• Server cold start (wait & retry)\n• Wrong endpoint (try inspect site)\n• Invalid prompt\n• Rate limit";
+      if (err.code === "ECONNABORTED") errMsg += "\n• Timeout – server too slow";
+      await api.unsendMessage(loadingMsg.messageID);
+      api.sendMessage(errMsg, threadID);
+    } finally {
+      if (await fs.pathExists(imgPath)) {
+        await fs.remove(imgPath);
+      }
     }
-}
-
-// Bot login and listener
-login({ email: process.env.FB_EMAIL, password: process.env.FB_PASS }, (err, api) => {
-    if (err) return console.error("Login error:", err);
-
-    console.log(`Bot online! Prefix: ${PREFIX}. Listening...`);
-
-    api.listenMqtt(async (err, message) => {
-        if (err || !message || !message.body) return;
-
-        const body = message.body.trim();
-        if (!body.startsWith(PREFIX)) return;
-
-        const command = body.slice(PREFIX.length).trim();
-        const [cmd, ...args] = command.split(/\s+/);
-        const input = args.join(' ');
-
-        if (['img', 'imagine'].includes(cmd.toLowerCase())) {
-            if (!input) {
-                return api.sendMessage(`Usage: ${PREFIX}img <prompt> [--negative <neg>] [--ar <ratio>]\nExample: ${PREFIX}img cyberpunk city --ar 16:9 --negative blurry`, message.threadID);
-            }
-
-            const options = parsePromptArgs(input);
-            api.sendMessage(`🖼️ Generating: "${options.prompt}"\nNegative: ${options.negative_prompt || 'none'}\nAR: \( {options.width}x \){options.height}\nWait 20-90 sec...`, message.threadID);
-
-            // Add to queue
-            genQueue.add(async () => {
-                try {
-                    const filePath = await generateImage(options);
-                    await api.sendMessage({
-                        body: `✅ Generated!\nPrompt: ${options.prompt}`,
-                        attachment: fs.createReadStream(filePath)
-                    }, message.threadID);
-                    await fs.unlink(filePath);  // cleanup
-                } catch {
-                    api.sendMessage("❌ Failed to generate. Server busy or invalid prompt. Try simpler one.", message.threadID);
-                }
-            });
-        }
-
-        if (cmd.toLowerCase() === 'help') {
-            api.sendMessage(`Mirai Image Bot Help:\n\( {PREFIX}img <prompt> [--negative <neg_prompt>] [--ar <w:h>]\n \){PREFIX}help - This menu\nNote: Free server, may be slow.`, message.threadID);
-        }
-    });
-});
+  }
+};
