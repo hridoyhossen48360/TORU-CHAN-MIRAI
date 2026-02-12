@@ -11,7 +11,7 @@ module.exports.config = {
   credits: "Hridoy",
   description: "Random NSFW pic from waifu.pics (waifu/neko/trap/blowjob) - random if no type given",
   commandCategory: "nsfw",
-  usages: "[waifu | neko | trap | blowjob]  (no arg = random category)",
+  usages: "waifu [waifu | neko | trap | blowjob]  (no arg = random category)",
   cooldowns: 5
 };
 
