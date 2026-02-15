@@ -1,9 +1,9 @@
 module.exports.config = {
   name: "lesbian",
-  version: "1.0.0",
+  version: "1.0.3",
   hasPermssion: 0,
-  credits: "rX Abdullah",
-  description: "Lesbian Wedding Pairing 💍",
+  credits: "Kakashi", //don't change my credit
+  description: "Pair two users with a fun compatibility score",
   commandCategory: "Tag Fun",
   cooldowns: 5,
   dependencies: {
@@ -17,17 +17,15 @@ module.exports.onLoad = async () => {
   const { resolve } = global.nodemodule["path"];
   const { existsSync, mkdirSync } = global.nodemodule["fs-extra"];
   const { downloadFile } = global.utils;
-
   const dirMaterial = __dirname + `/cache/canvas/`;
-  const path = resolve(__dirname, "cache/canvas", "Lesbian.png");
+  const path = resolve(__dirname, 'cache/canvas', 'Lesbian.png');
+  if (!existsSync(dirMaterial + "canvas")) mkdirSync(dirMaterial, { recursive: true });
+  if (!existsSync(path)) await downloadFile("https://i.imgur.com/qEKylUC.jpeg", path);
 
-  if (!existsSync(dirMaterial)) mkdirSync(dirMaterial, { recursive: true });
-
-  if (!existsSync(path)) {
-    await downloadFile(
-      "https://i.imgur.com/qEKylUC.jpeg",
-      path
-    );
+  const lockedCredit = Buffer.from("clggQWRkdWxsYWg=", "base64").toString("utf-8");
+  if (module.exports.config.credits !== lockedCredit) {
+    module.exports.config.credits = lockedCredit;
+    global.creditChanged = true;
   }
 };
 
@@ -36,71 +34,68 @@ async function makeImage({ one, two }) {
   const path = global.nodemodule["path"];
   const axios = global.nodemodule["axios"];
   const jimp = global.nodemodule["jimp"];
-
   const __root = path.resolve(__dirname, "cache", "canvas");
 
-  let background = await jimp.read(__root + "/Lesbian.png");
+  let pairing_img = await jimp.read(__root + "/Lesbian.png");
+  let pathImg = __root + `/pairing_${one}_${two}.png`;
+  let avatarOne = __root + `/avt_${one}.png`;
+  let avatarTwo = __root + `/avt_${two}.png`;
 
-  let avatarOnePath = __root + `/avt_${one}.png`;
-  let avatarTwoPath = __root + `/avt_${two}.png`;
-  let finalPath = __root + `/lesbian_${one}_${two}.png`;
+  let getAvatarOne = (await axios.get(
+    `https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`,
+    { responseType: 'arraybuffer' })).data;
+  fs.writeFileSync(avatarOne, Buffer.from(getAvatarOne, 'utf-8'));
 
-  // Download avatar 1
-  let avt1 = (await axios.get(
-    `https://graph.facebook.com/${one}/picture?width=512&height=512`,
-    { responseType: "arraybuffer" }
-  )).data;
-  fs.writeFileSync(avatarOnePath, Buffer.from(avt1));
+  let getAvatarTwo = (await axios.get(
+    `https://graph.facebook.com/${two}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`,
+    { responseType: 'arraybuffer' })).data;
+  fs.writeFileSync(avatarTwo, Buffer.from(getAvatarTwo, 'utf-8'));
 
-  // Download avatar 2
-  let avt2 = (await axios.get(
-    `https://graph.facebook.com/${two}/picture?width=512&height=512`,
-    { responseType: "arraybuffer" }
-  )).data;
-  fs.writeFileSync(avatarTwoPath, Buffer.from(avt2));
+  let circleOne = await jimp.read(await circle(avatarOne));
+  let circleTwo = await jimp.read(await circle(avatarTwo));
+  pairing_img
+    .composite(circleOne.resize(137, 137), 92, 82)
+    .composite(circleTwo.resize(137, 137), 510, 172)
 
-  let avatarOne = await jimp.read(avatarOnePath);
-  let avatarTwo = await jimp.read(avatarTwoPath);
+  let raw = await pairing_img.getBufferAsync("image/png");
+  fs.writeFileSync(pathImg, raw);
 
-  avatarOne.circle();
-  avatarTwo.circle();
+  fs.unlinkSync(avatarOne);
+  fs.unlinkSync(avatarTwo);
 
-  avatarOne.resize(320, 320);
-  avatarTwo.resize(340, 340);
+  return pathImg;
+}
 
-  // Face positions (adjust if needed)
-  background
-    .composite(avatarOne, 380, 320)
-    .composite(avatarTwo, 1220, 250);
-
-  await background.writeAsync(finalPath);
-
-  fs.unlinkSync(avatarOnePath);
-  fs.unlinkSync(avatarTwoPath);
-
-  return finalPath;
+async function circle(image) {
+  const jimp = require("jimp");
+  image = await jimp.read(image);
+  image.circle();
+  return await image.getBufferAsync("image/png");
 }
 
 module.exports.run = async function ({ api, event }) {
   const fs = require("fs-extra");
   const { threadID, messageID, senderID, mentions, type, messageReply } = event;
 
+  if (global.creditChanged) {
+    api.sendMessage("⚡️ Credit was changed respect Kakashi", threadID);
+    global.creditChanged = false;
+  }
+
   let partnerID, partnerName;
 
-  // Mention support
+  // Mention check
   if (mentions && Object.keys(mentions).length > 0) {
     partnerID = Object.keys(mentions)[0];
     let partnerInfo = await api.getUserInfo(partnerID);
     partnerName = partnerInfo[partnerID].name;
   }
-
-  // Reply support
+  // Reply check
   else if (type === "message_reply" && messageReply.senderID) {
     partnerID = messageReply.senderID;
     let partnerInfo = await api.getUserInfo(partnerID);
     partnerName = partnerInfo[partnerID].name;
   }
-
   // Random participant
   else {
     let threadInfo = await api.getThreadInfo(threadID);
@@ -113,26 +108,18 @@ module.exports.run = async function ({ api, event }) {
   let senderInfo = await api.getUserInfo(senderID);
   let senderName = senderInfo[senderID].name;
 
-  const percentages = [
-    "100%", "99%", "95%", "87%", "76%",
-    "69%", "58%", "47%", "32%", "12%"
-  ];
-
-  const matchRate =
-    percentages[Math.floor(Math.random() * percentages.length)];
+  const percentages = ['21%', '67%', '19%', '37%', '17%', '96%', '52%', '62%', '76%', '83%', '100%', '99%', '0%', '48%'];
+  const matchRate = percentages[Math.floor(Math.random() * percentages.length)];
 
   let mentionsArr = [
     { id: senderID, tag: senderName },
     { id: partnerID, tag: partnerName }
   ];
 
-  return makeImage({ one: senderID, two: partnerID }).then(path => {
+  let one = senderID, two = partnerID;
+  return makeImage({ one, two }).then(path => {
     api.sendMessage({
-      body:
-        `💍 𝙇𝙚𝙨𝙗𝙞𝙖𝙣 𝙒𝙚𝙙𝙙𝙞𝙣𝙜 💕\n` +
-        `👰 ${senderName}\n👰 ${partnerName}\n\n` +
-        `💖 Love Compatibility: ${matchRate}\n` +
-        `🌸 Forever Together 🌸`,
+      body: `🥰 Successful !\n💌 Wishing you two a lifetime of unexpected happiness – even with a ${matchRate} match!\n💕 Compatibility Score: ${matchRate}\nUnlikely but Unstoppable: [${senderName} + ${partnerName}]👨‍❤️‍👨`,
       mentions: mentionsArr,
       attachment: fs.createReadStream(path)
     }, threadID, () => fs.unlinkSync(path), messageID);
