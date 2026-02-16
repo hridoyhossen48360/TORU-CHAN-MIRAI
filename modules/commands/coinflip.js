@@ -1,62 +1,54 @@
-
 const fs = require("fs"),
       request = require("request"),
       pathFile = __dirname + "/cache/";
 
 module.exports.config = {
     name: "coinflip",
-    version: "1.0.2",
+    version: "1.0.3",
     hasPermssion: 0,
-    creditss: "ken", // language changed to English
-    description: "coin gambling game",
+    credits: "Kakashi",
+    description: "Coin gambling game",
     commandCategory: "Game",
-    usages: "[head| tail] [bet amount]",
+    usages: "[head|tail] [bet amount]",
     cooldowns: 5
 };
 
-module.exports.onLoad = () => {
-    if (!fs.existsSync(pathFile + "cache"))
+module.exports.onLoad = function () {
+    if (!fs.existsSync(pathFile))
         fs.mkdirSync(pathFile, { recursive: true });
 
-    if (!fs.existsSync(pathFile + this.config.name + ".gif"))
+    if (!fs.existsSync(pathFile + "coinflip.gif"))
         request("https://i.imgur.com/sBUJ1gN.gif")
-            .pipe(fs.createWriteStream(pathFile + this.config.name + ".gif"));
+            .pipe(fs.createWriteStream(pathFile + "coinflip.gif"));
 };
 
 module.exports.run = async ({ api, event, args, Currencies }) => {
     const { getData, increaseMoney, decreaseMoney } = Currencies;
-    const { createReadStream } = require("fs-extra");
     const { threadID, messageID, senderID } = event;
 
-    const data = (await Currencies.getData(senderID)).data || {};
-
-    const getRandomIntInclusive = (min, max) => {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    };
-
-    // Dice result
-    var diceResult = [
-        `head ${getRandomIntInclusive(11, 17)}`,
-        `tail ${getRandomIntInclusive(4, 10)}`
-    ];
-
-    const result = diceResult[Math.floor(Math.random() * diceResult.length)];
-    const money = (await getData(senderID)).money;
-
-    // Bet amount (default = all money)
-    var moneyBet = parseInt(args[1]) ? parseInt(args[1]) : money;
-    var winMoney = moneyBet * 2;
-    const tax = winMoney * 5 / 100;
-    const finalMoney = winMoney - tax;
-
-    if (args[0] !== "head" && args[0] !== "tail")
+    if (!args[0])
         return api.sendMessage(
-            "Wrong format.\nUse: head or tail.",
+            "Use format:\ncoinflip head 100\ncoinflip tail 100",
             threadID,
             messageID
         );
 
-    if (isNaN(moneyBet) || moneyBet < 50)
+    const choice = args[0].toLowerCase();
+
+    if (choice !== "head" && choice !== "tail")
+        return api.sendMessage(
+            "Please choose head or tail.",
+            threadID,
+            messageID
+        );
+
+    const userData = await getData(senderID);
+    const money = userData.money;
+
+    let moneyBet = parseInt(args[1]);
+    if (isNaN(moneyBet)) moneyBet = money;
+
+    if (moneyBet < 50)
         return api.sendMessage(
             "Minimum bet amount is $50.",
             threadID,
@@ -70,50 +62,59 @@ module.exports.run = async ({ api, event, args, Currencies }) => {
             messageID
         );
 
+    // 🔥 TRUE 50/50 RANDOM
+    const randomSide = Math.random() < 0.5 ? "head" : "tail";
+
+    const winMoney = moneyBet * 2;
+    const tax = winMoney * 5 / 100;
+    const finalMoney = winMoney - tax;
+
     api.sendMessage(
         {
-            body: "🪙 flipping the coin...",
-            attachment: fs.createReadStream(
-                __dirname + `/cache/${this.config.name}.gif`
-            )
+            body: "🪙 Flipping the coin...",
+            attachment: fs.createReadStream(pathFile + "coinflip.gif")
         },
         threadID,
         (err, info) => {
-            if (err) console.log(err);
 
-            setTimeout(() => {
+            setTimeout(async () => {
+
                 api.unsendMessage(info.messageID);
 
-                if (args[0].toLowerCase() === result.slice(0, 3)) {
+                if (choice === randomSide) {
+
+                    await increaseMoney(senderID, finalMoney);
+
                     return api.sendMessage(
-                        {
-                            body:
-                                `Coin result: ${result}\n` +
-                                `You chose: ${args[0].toLowerCase()}\n` +
-                                `You WIN and get ${winMoney}$\n` +
-                                `5% tax deducted: ${tax}$\n` +
-                                `Final amount received: ${finalMoney}$\n` +
-                                `Your new balance: ${money + finalMoney}$`
-                        },
+                        `🪙 Result: ${randomSide}\n` +
+                        `You chose: ${choice}\n\n` +
+                        `🎉 You WIN!\n` +
+                        `Bet: ${moneyBet}$\n` +
+                        `Win Amount: ${winMoney}$\n` +
+                        `Tax (5%): ${tax}$\n` +
+                        `Received: ${finalMoney}$\n` +
+                        `💰 New Balance: ${money + finalMoney}$`,
                         threadID,
-                        () => increaseMoney(senderID, finalMoney),
                         messageID
                     );
+
                 } else {
+
+                    await decreaseMoney(senderID, moneyBet);
+
                     return api.sendMessage(
-                        {
-                            body:
-                                `Coin result: ${result}\n` +
-                                `You chose: ${args[0].toLowerCase()}\n` +
-                                `You LOSE and lost ${moneyBet}$\n` +
-                                `Remaining balance: ${money - moneyBet}$`
-                        },
+                        `🪙 Result: ${randomSide}\n` +
+                        `You chose: ${choice}\n\n` +
+                        `❌ You LOSE!\n` +
+                        `Lost: ${moneyBet}$\n` +
+                        `💰 Remaining Balance: ${money - moneyBet}$`,
                         threadID,
-                        () => decreaseMoney(senderID, moneyBet),
                         messageID
                     );
                 }
+
             }, 3000);
+
         },
         messageID
     );
