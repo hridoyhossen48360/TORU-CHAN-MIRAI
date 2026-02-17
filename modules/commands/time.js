@@ -1,4 +1,4 @@
-Install const moment = require("moment-timezone");
+const moment = require("moment-timezone");
 const fs = require("fs-extra");
 const { createCanvas } = require("canvas");
 
