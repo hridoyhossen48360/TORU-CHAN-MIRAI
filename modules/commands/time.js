@@ -8,7 +8,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "𝐇𝐑𝐈𝐃𝐎𝐘 𝐇𝐎𝐒𝐒𝐄𝐍",
  description: "Beautiful neon-style date/time generator",
- commandCategory: "Info",
+ commandCategory: "Utility",
  cooldowns: 1
 };
 
