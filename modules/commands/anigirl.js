@@ -2,7 +2,7 @@ module.exports.config = {
     name: "anigirl",
     version: "1.0.0",
     hasPermssion: 0,
-    credits: "𝙈𝙧𝙏𝙤𝙢𝙓𝙭𝙓",
+    credits: "Hridoy",
     description: "random dp",
     commandCategory: "Image",
     usages: "send message",

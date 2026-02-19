@@ -2,7 +2,7 @@ module.exports.config = {
 	name: "weather",
 	version: "1.0.1",
 	hasPermssion: 0,
-	credits: "𝙈𝙧𝙏𝙤𝙢𝙓𝙭𝙓",
+	credits: "Hridoy",
 	description: "news",
 	commandCategory: "Utility",
 	usages: "[Location]",

@@ -5,7 +5,7 @@ module.exports.config = {
   aliases: ["freefireinfo", "ffstats"],
   version: "2.1.0",
   hasPermssion: 0,
-  credits: "🔰𝐇𝐑𝐈𝐃𝐎𝐘 𝐇𝐎𝐒𝐒𝐄𝐍🔰",
+  credits: "Hridoy",
   description: "Show complete Free Fire player info",
   commandCategory: "Game",
   usages: "ffinfo <uid>",

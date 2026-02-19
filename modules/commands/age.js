@@ -2,7 +2,7 @@ module.exports = {
   config: {
     name: "age",
     version: "2.1",
-    author: "Kakashi",
+    author: "Hridoy",
     hasPermission: 0,
     commandCategory: "Utility",
     cooldowns: 5,

@@ -2,7 +2,7 @@ module.exports.config = {
   name: "lesbian",
   version: "1.0.3",
   hasPermssion: 0,
-  credits: "Kakashi", //don't change my credit
+  credits: "Hridoy", //don't change my credit
   description: "Pair two users with a fun compatibility score",
   commandCategory: "Tag Fun",
   cooldowns: 5,

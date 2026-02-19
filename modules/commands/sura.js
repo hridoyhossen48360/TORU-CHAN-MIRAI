@@ -2,7 +2,7 @@ module.exports.config = {
   name: "sura",
   version: "0.0.1",
   hasPermssion: 0,
-  credits: "MrTomXxX",
+  credits: "Hridoy",
   description: "see information about bots",
   commandCategory: "Utility",
   usages: "",

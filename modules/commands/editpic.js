@@ -7,7 +7,7 @@ module.exports.config = {
   name: "editpic",
   version: "2.0.0",
   hasPermssion: 0,
-  credits: "KAKASHI",
+  credits: "Hridoy",
   description: "Edit picture with multiple filters",
   commandCategory: "Image",
   usages: "[filter] + reply image",

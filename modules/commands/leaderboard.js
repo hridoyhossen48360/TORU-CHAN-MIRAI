@@ -5,7 +5,7 @@ module.exports.config = {
     name: "leaderboard",
     version: "1.0.0",
     hasPermssion: 0,
-    credits: "Kakashi",
+    credits: "Hridoy",
     description: "Group message leaderboard",
     commandCategory: "Group",
     usages: "",

@@ -7,7 +7,7 @@ module.exports.config = {
   name: "jail",
   version: "10.0",
   hasPermssion: 0,
-  credits: "🔰𝐇𝐑𝐈𝐃𝐎𝐘 𝐇𝐎𝐒𝐒𝐄𝐍🔰",
+  credits: "Hridoy",
   description: "Wanted poster (Square Avatar + Random Reason)",
   commandCategory: "Tag Fun",
   usages: "jail [@mention/reply/UID/link/name]",

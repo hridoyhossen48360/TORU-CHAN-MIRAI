@@ -109,7 +109,7 @@ module.exports.run = async function ({ api, event }) {
  ctx.fillStyle = "#00FFE5";
  ctx.shadowColor = "#00FFE5";
  ctx.shadowBlur = 25;
- ctx.fillText("✦ 𝙏𝙊𝙍𝙐 𝘾𝙃𝘼𝙉 ✦", WIDTH / 2, HEIGHT - 70);
+ ctx.fillText("✦ Kakashi ✦", WIDTH / 2, HEIGHT - 70);
 
  ctx.shadowBlur = 0;
 

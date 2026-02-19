@@ -2,7 +2,7 @@
     name: "date",
     version: "2.0.0",
     hasPermssion: 0,
-    credits: "𝙈𝙧𝙏𝙤𝙢𝙓𝙭𝙓",
+    credits: "Hridoy",
     description: "Mention your partner",
     commandCategory: "Tag Fun",
     usages: "[@mention]",

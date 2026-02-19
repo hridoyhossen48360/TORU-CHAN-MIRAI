@@ -4,7 +4,7 @@ module.exports.config = {
   name: "autoseen",
   version: "1.0.1",
   hasPermssion: 2,
-  credits: "rX + Simple Fix by Sabah",
+  credits: "Hridoy",
   description: "Auto seen on/off",
   commandCategory: "Utility",
   usages: "on/off",

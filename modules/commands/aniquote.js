@@ -2,7 +2,7 @@ module.exports.config = {
   name: "aniquote",
   version: "1.0.0",
   hasPermssion: 0,
-  credits: "𝙈𝙧𝙏𝙤𝙢𝙓𝙭𝙓",
+  credits: "Hridoy",
   description: "random anime",
   commandCategory: "AI",
   usages: "tag or none",

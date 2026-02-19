@@ -2,7 +2,7 @@ module.exports.config = {
     name: "fingering2",
     version: "7.3.1",
     hasPermssion: 2,
-    credits: "Anup Kumar",
+    credits: "Hridoy",
     description: "fingering your vagina",
     commandCategory: "nsfw",
     usages: "[@mention]",

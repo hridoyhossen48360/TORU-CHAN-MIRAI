@@ -2,7 +2,7 @@ module.exports.config = {
   name: "girl",
   version: "1.0.0",
   hasPermssion: 0,
-  credits: "𝙈𝙧𝙏𝙤𝙢𝙓𝙭𝙓",
+  credits: "Hridoy",
   description: "Random image girl",
   commandCategory: "Image",
   usages: "girl",

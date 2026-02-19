@@ -2,7 +2,7 @@ module.exports.config = {
 	name: "einstein",
 	version: "3.1.1",
 	hasPermssion: 0,
-	credits: "𝙈𝙧𝙏𝙤𝙢𝙓𝙭𝙓",
+	credits: "Hridoy",
 	description: "Comment on the board",
 	commandCategory: "Image",
 	usages: "[text]",

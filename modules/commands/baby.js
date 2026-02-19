@@ -32,8 +32,8 @@ async function sendTypingIndicatorV2(sendTyping, threadID) {
 
 (async () => {
  try {
- const res = await axios.get("https://raw.githubusercontent.com/rxabdullah0007/rX-apis/main/xApis/rXallApi.json");
- if (res.data && res.data.baby) simsim = res.data.baby;
+ const res = await axios.get("https://raw.githubusercontent.com/abdullahrx07/X-api/main/MaRiA/baseApiUrl.json");
+ if (res.data && res.data.mari) simsim = res.data.mari;
  } catch {}
 })();
 
@@ -41,11 +41,11 @@ module.exports.config = {
  name: "baby",
  aliases: ["maria", "hippi"],
  premium: false, 
- version: "1.0.9",
+ version: "1.1.0",
  hasPermssion: 0,
  credits: "rX",
  description: "AI auto teach with Teach & List support + Typing effect",
- commandCategory: "System",
+ commandCategory: "Utility",
  usages: "[query]",
  cooldowns: 0,
  prefix: false
@@ -179,7 +179,7 @@ module.exports.handleEvent = async function ({ api, event, Users }) {
  if (!text || !simsim) return;
 
  const senderName = await Users.getNameUser(event.senderID);
- const triggers = ["baby", "bby", "bot", "bbz", "toru", "kakashi", "hi"];
+ const triggers = ["baby", "bby", "bot", "bbz", "toru", "kakashi"];
 
  if (triggers.includes(text)) {
  const replies = [
@@ -216,7 +216,7 @@ module.exports.handleEvent = async function ({ api, event, Users }) {
  });
  }
 
- const matchPrefix = /^(baby|bby|xan|toru|bot|kakashi)\s+/i;
+ const matchPrefix = /^(baby|bby|bot|bbz|toru|kakashi)\s+/i;
  if (matchPrefix.test(text)) {
  const query = text.replace(matchPrefix, "").trim();
  if (!query) return;

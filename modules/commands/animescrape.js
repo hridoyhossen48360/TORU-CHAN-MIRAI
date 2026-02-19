@@ -2,7 +2,7 @@ module.exports.config = {
     name: "animescrape",
     version: "1.0.0",
     hasPermssion: 0,
-    credits: "lester navarra",
+    credits: "Hridoy",
     description: "scrape anime",
     commandCategory: "Utility",
     usages: "<space>AnimeTitle",

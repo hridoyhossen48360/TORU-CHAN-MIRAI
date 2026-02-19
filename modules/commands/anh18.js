@@ -3,7 +3,7 @@
   version: "1.0.0",
   premium:true,
   hasPermssion: 0,
-  credits: "Kakashi",
+  credits: "Hridoy",
   description: "Projec M4a.",
   commandCategory: "nsfw",
   usages: "",

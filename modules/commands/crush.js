@@ -2,7 +2,7 @@ module.exports.config = {
     name: "crush",
     version: "2.0.0",
     hasPermssion: 0,
-    credits: "𝙈𝙧𝙏𝙤𝙢𝙓𝙭𝙓",
+    credits: "Hridoy",
     description: "mention partner",
     commandCategory: "Tag Fun",
     usages: `Please tag 1 person\n\nHow to use?\n${global.config.PREFIX}crush <@tag>\n\nExample:\n${global.config.PREFIX}crush @name\n`,

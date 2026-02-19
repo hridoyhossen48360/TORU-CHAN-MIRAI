@@ -2,8 +2,8 @@ module.exports.config = {
   name: "fikfab",  // Command: !tikporn
   version: "1.0",
   hasPermssion: 0,
-  credits: "Hridoy-inspired",
-  description: "Random Tik.Porn video send করে (NSFW 🔥)",
+  credits: "Hridoy",
+  description: "Random Tik.Porn video send করে..",
   commandCategory: "nsfw",
   usages: "",
   cooldowns: 10
