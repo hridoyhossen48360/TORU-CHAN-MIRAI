@@ -2,7 +2,7 @@ module.exports.config = {
   name: "ayaka",
   version: "1.0.0",
   hasPermssion: 0,
-  credits: "𝙈𝙧𝙏𝙤𝙢𝙓𝙭𝙓",
+  credits: "Hridoy",
   description: "Random ảnh ayaka",
   commandCategory: "Image",
   usages: "ayaka",
