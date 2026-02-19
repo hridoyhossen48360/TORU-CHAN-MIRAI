@@ -2,7 +2,7 @@ module.exports.config = {
   name: "calendar",
   version: "1.0.0",
   hasPermssion: 0,
-  credits: "Hridoy + GPT",
+  credits: "Hridoy",
   description: "Bangladesh Timezone Calendar",
   commandCategory: "Utility",
   usages: "",
