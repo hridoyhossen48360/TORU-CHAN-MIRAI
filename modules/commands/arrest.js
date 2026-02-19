@@ -2,7 +2,7 @@ module.exports.config = {
  name: "arrest",
  version: "2.1.0",
  hasPermssion: 0,
- credits: "CYBER ☢️_𖣘 -BOT ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
+ credits: "Hridoy",
  description: "Arrest a friend you mention",
  commandCategory: "Tag Fun",
  usages: "[mention]",
