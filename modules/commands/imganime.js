@@ -2,7 +2,7 @@ module.exports.config = {
   name: "imganime",
   version: "2.0.0",
   hasPermssion: 0,
-  credits: "Hridoy x Sabah",
+  credits: "Hridoy",
   description: "Random Anime Image (Stable)",
   commandCategory: "Image",
   usages: "",
