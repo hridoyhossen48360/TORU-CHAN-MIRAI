@@ -2,7 +2,7 @@ module.exports.config = {
     name: "hentai",
     version: "1.0.0",
     hasPermssion: 0,
-    credits: "𝙈𝙧𝙏𝙤𝙢𝙓𝙭𝙓",
+    credits: "Hridoy",
     description: "segs",
     commandCategory: "nsfw",
     usages: "send message",
