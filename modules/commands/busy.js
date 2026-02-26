@@ -1,65 +1,79 @@
-module.exports.config = {
-	name: "busy",
-	version: "1.0.0",
-	permissions: 1,
-	credits: "rX",
-	description: "Turn on or off busy mode",
-  	usages: "[reason]",
-  	commandCategory: "Utility",
-  	cooldowns: 5
+if (!global.client.busyList)
+	global.client.busyList = {};
+
+module.exports = {
+	config: {
+		name: "busy",
+		version: "1.6",
+		author: "NTKhang",
+		countDown: 5,
+		role: 0,
+		description: {
+			vi: "bật chế độ không làm phiền, khi bạn được tag bot sẽ thông báo",
+			en: "turn on do not disturb mode, when you are tagged bot will notify"
+		},
+		category: "Group",
+		guide: {
+			vi: "   {pn} [để trống | <lý do>]: bật chế độ không làm phiền"
+				+ "\n   {pn} off: tắt chế độ không làm phiền",
+			en: "   {pn} [empty | <reason>]: turn on do not disturb mode"
+				+ "\n   {pn} off: turn off do not disturb mode"
+		}
+	},
+
+	langs: {
+		vi: {
+			turnedOff: "✅ | Đã tắt chế độ không làm phiền",
+			turnedOn: "✅ | Đã bật chế độ không làm phiền",
+			turnedOnWithReason: "✅ | Đã bật chế độ không làm phiền với lý do: %1",
+			turnedOnWithoutReason: "✅ | Đã bật chế độ không làm phiền",
+			alreadyOn: "Hiện tại người dùng %1 đang bận",
+			alreadyOnWithReason: "Hiện tại người dùng %1 đang bận với lý do: %2"
+		},
+		en: {
+			turnedOff: "✅ | Do not disturb mode has been turned off",
+			turnedOn: "✅ | Do not disturb mode has been turned on",
+			turnedOnWithReason: "✅ | Do not disturb mode has been turned on with reason: %1",
+			turnedOnWithoutReason: "✅ | Do not disturb mode has been turned on",
+			alreadyOn: "User %1 is currently busy",
+			alreadyOnWithReason: "User %1 is currently busy with reason: %2"
+		}
+	},
+
+	onStart: async function ({ args, message, event, getLang, usersData }) {
+		const { senderID } = event;
+
+		if (args[0] == "off") {
+			const { data } = await usersData.get(senderID);
+			delete data.busy;
+			await usersData.set(senderID, data, "data");
+			return message.reply(getLang("turnedOff"));
+		}
+
+		const reason = args.join(" ") || "";
+		await usersData.set(senderID, reason, "data.busy");
+		return message.reply(
+			reason ?
+				getLang("turnedOnWithReason", reason) :
+				getLang("turnedOnWithoutReason")
+		);
+	},
+
+	onChat: async ({ event, message, getLang }) => {
+		const { mentions } = event;
+
+		if (!mentions || Object.keys(mentions).length == 0)
+			return;
+		const arrayMentions = Object.keys(mentions);
+
+		for (const userID of arrayMentions) {
+			const reasonBusy = global.db.allUserData.find(item => item.userID == userID)?.data.busy || false;
+			if (reasonBusy !== false) {
+				return message.reply(
+					reasonBusy ?
+						getLang("alreadyOnWithReason", mentions[userID].replace("@", ""), reasonBusy) :
+						getLang("alreadyOn", mentions[userID].replace("@", "")));
+			}
+		}
+	}
 };
-
-const busyPath = __dirname + '/bot/busy.json';
-const fs = require('fs');
-
-module.exports.onLoad = () => {
-  if (!fs.existsSync(busyPath)) fs.writeFileSync(busyPath, JSON.stringify({}));
-}
-
-module.exports.handleEvent = async function({ api, event, Users }) {
-    let busyData = JSON.parse(fs.readFileSync(busyPath));
-    var { senderID, threadID, messageID, mentions } = event;
-    if (senderID in busyData) {
-        var info = busyData[senderID];
-        delete busyData[senderID];
-        fs.writeFileSync(busyPath, JSON.stringify(busyData, null, 4));
-        return api.sendMessage(`🎀─── [NOTIFICATION] ───🎀\n\n『 𝐓𝐎𝐑𝐔 』 - Welcome back, Master 🥰\n\n🎀───── •🌸• ─────🎀`, threadID, () => {
-            if (info.tag.length == 0) api.sendMessage("『 𝐓𝐎𝐑𝐔 』 - While Master was away, nobody mentioned you ❤️", threadID);
-            else {
-                var msg = "";
-                for (var i of info.tag) {
-                    msg += `${i}\n`
-                }
-                api.sendMessage("『 𝐓𝐎𝐑𝐔 』 - Here’s the list of people who mentioned you while you were away 🎀:\n\n" + msg, threadID)
-            }
-        }, messageID);
-    }
-
-    if (!mentions || Object.keys(mentions).length == 0) return;
-    
-    for (const [ID, name] of Object.entries(mentions)) {
-        if (ID in busyData) {
-            var infoBusy = busyData[ID], mentioner = await Users.getNameUser(senderID), replaceName = event.body.replace(`${name}`, "");
-            infoBusy.tag.push(`${mentioner}: ${replaceName == "" ? "just mentioned Master once" : replaceName}`)
-            busyData[ID] = infoBusy;
-            fs.writeFileSync(busyPath, JSON.stringify(busyData, null, 4));
-            return api.sendMessage(`🎀─── [NOTICE] ───🎀\n\n${name.replace("@", "")} is currently busy${infoBusy.lido ? ` with reason: ${infoBusy.lido}.\n\n🎀───── •🌸• ─────🎀` : "."}`, threadID, messageID);
-        }
-    }
-}
-
-module.exports.run = async function({ api, event, args, Users }) {
-	await new Promise(resolve => setTimeout(resolve, 1000));
-    let busyData = JSON.parse(fs.readFileSync(busyPath));
-    const { threadID, senderID, messageID, body } = event;
-    var content = args.join(" ") || "";
-    if (!(senderID in busyData)) {
-        busyData[senderID] = {
-            lido: content,
-            tag: []
-        }
-        fs.writeFileSync(busyPath, JSON.stringify(busyData, null, 4));
-        var msg = (content.length == 0) ? '[BOT CUTE] - Master just enabled busy mode without giving a reason 🐧' : `[BOT CUTE] - Master just enabled busy mode with reason 🐧: ${content}`;
-        return api.sendMessage(msg, threadID, messageID);
-    }
-}

@@ -1,32 +1,57 @@
-const axios = require("axios");
+const fs = require("fs-extra");
+const path = require("path");
 
-module.exports.config = {
-  name: "delete",
-  version: "1.0.0",
-  hasPermssion: 1,   // শুধু admin/owner use করতে পারবে
-  credits: "rX Abdullah",
-  description: "Delete a trigger (ask) from server",
-  commandCategory: "Admin",
-  usages: ".delete <trigger>",
-  cooldowns: 5
-};
+module.exports = {
+	config: {
+		name: "delete",
+    aliases: ["del"],
+		version: "1.7",
+		author: "MahMUD",
+		countDown: 10,
+		role: 2,
+		description: {
+			vi: "Xóa một lệnh",
+			en: "Delete a command"
+		},
+		category: "Admin",
+		guide: {
+			vi: "   {pn} <tên lệnh>: xóa lệnh",
+			en: "   {pn} <command name>: delete command"
+		}
+	},
 
-module.exports.run = async function({ api, event, args }) {
-  try {
-    const trigger = args.join(" ").trim();
-    if (!trigger) {
-      return api.sendMessage("❌ Trigger name missing. Use: .deleteAsk <trigger>", event.threadID, event.messageID);
-    }
+	langs: {
+		vi: {
+			noArgs: "❌ Vui lòng cung cấp tên lệnh cần xóa",
+			notFound: "❌ Không tìm thấy lệnh: %1",
+			deleted: "✅ Đã xóa lệnh: %1",
+			error: "✗ Đã xảy ra lỗi: %1"
+		},
+		en: {
+			noArgs: "❌ Please provide command name to delete",
+			notFound: "❌ The Command not found: %1",
+			deleted: "✅ Deleted The command: %1",
+			error: "✗ An error occurred: %1"
+		}
+	},
 
-    const url = "https://rx-simisimi-api-tllc.onrender.com/deleteAsk";
-    const params = { ask: trigger };
+	onStart: async function ({ args, message, getLang }) {
+		if (!args.length) {
+			return message.reply(getLang("noArgs"));
+		}
 
-    const res = await axios.delete(url, { params });
-    const message = res.data.message || "✅ Done";
+		const commandName = args[0].toLowerCase();
+		const commandPath = path.join(__dirname, `${commandName}.js`);
 
-    api.sendMessage(message, event.threadID, event.messageID);
-  } catch (err) {
-    console.error("deleteAsk error:", err.response?.data || err.message);
-    api.sendMessage("⚠️ Error deleting ask", event.threadID, event.messageID);
-  }
+		try {
+			if (!fs.existsSync(commandPath)) {
+			return message.reply(getLang("notFound", commandName));
+			}
+
+	    fs.unlinkSync(commandPath);
+			return message.reply(getLang("deleted", commandName));
+		} catch (err) {
+			return message.reply(getLang("error", err.message));
+		}
+	}
 };

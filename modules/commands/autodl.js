@@ -1,106 +1,86 @@
 const axios = require("axios");
 const fs = require("fs-extra");
 const path = require("path");
-const { alldown } = require("rx-dawonload");
 
-module.exports.config = {
+const getBaseUrl = async () => {
+  try {
+    const base = await axios.get("https://raw.githubusercontent.com/mahmudx7/HINATA/main/baseApiUrl.json");
+    return base.data.mahmud;
+  } catch (e) {
+    return "https://mahmud-global-apis.onrender.com"; 
+  }
+};
+
+module.exports = {
+  config: {
     name: "autodl",
-    version: "2.1.1",
-    credits: "rX Abdullah",
-    hasPermission: 0,
-    description: "Auto detect any link and ask for download confirm",
-    usePrefix: false,
-    commandCategory: "Utility",
-    usages: "",
-    cooldowns: 2
-};
+    version: "1.7",
+    author: "MahMUD",
+    countDown: 0,
+    role: 0,
+    category: "Media",
+    guide: {
+      en: "[just send the video link]",
+    },
+  },
 
-module.exports.run = async function () {};
+  onStart: async function () {},
 
-// -------------------------
-// 🔥 Auto Detect Link
-// -------------------------
-module.exports.handleEvent = async function ({ api, event }) {
-    const content = event.body ? event.body.trim() : "";
-    if (!content.startsWith("http")) return;
+  onChat: async function ({ api, event }) {
+      const obfuscatedAuthor = String.fromCharCode(77, 97, 104, 77, 85, 68); 
+        if (module.exports.config.author !== obfuscatedAuthor) {
+        return api.sendMessage("You are not authorized to change the author name.", event.threadID, event.messageID);
+     }
+    
+        if (!event.body) return;
+        const supportedSites = /https?:\/\/(www\.)?(vt\.tiktok\.com|tiktok\.com|facebook\.com|fb\.watch|instagram\.com|youtu\.be|youtube\.com|x\.com|twitter\.com|vm\.tiktok\.com)/gi;
+        if (supportedSites.test(event.body)) {
+        const links = event.body.match(/https?:\/\/\S+/gi);
+        if (!links) return;
+        const link = links[0];
 
-    // Detect Platform
-    let site = "Unknown";
-    if (content.includes("youtube.com") || content.includes("youtu.be")) site = "YouTube";
-    else if (content.includes("tiktok.com")) site = "TikTok";
-    else if (content.includes("instagram.com")) site = "Instagram";
-    else if (content.includes("facebook.com")) site = "Facebook";
+        let platform = "𝚄𝚗𝚔𝚗𝚘𝚠𝚗";
+        if (link.includes("facebook.com") || link.includes("fb.watch")) platform = "𝐅𝐚𝐜𝐞𝐛𝐨𝐨𝐤";
+        else if (link.includes("instagram.com")) platform = "𝐈𝐧𝐬𝐭𝐚𝐠𝐫𝐚𝐦";
+        else if (link.includes("tiktok.com")) platform = "𝐓𝐢𝐤𝐓𝐨𝐤";
+        else if (link.includes("youtube.com") || link.includes("youtu.be")) platform = "𝐘𝐨𝐮𝐓𝐮𝐛𝐞";
+        else if (link.includes("x.com") || link.includes("twitter.com")) platform = "𝐗 (𝐓𝐰𝐢𝐭𝐭𝐞𝐫)";
 
-    // Ask for confirmation
-    api.sendMessage(
-        `🔍 Platform detected: ${site}\n\n❮ React ❤ this message to start download ❯.`,
-        event.threadID,
-        (err, info) => {
-            if (err) return;
+     
+        const cacheDir = path.join(__dirname, "cache");
+        const filePath = path.join(cacheDir, `autodl_${Date.now()}.mp4`);
+        try { api.setMessageReaction("⏳", event.messageID, () => {}, true);
+        if (!fs.existsSync(cacheDir)) {
+        fs.mkdirSync(cacheDir, { recursive: true });
+      }
 
-            // Register Reaction Listener
-            global.client.handleReaction = global.client.handleReaction || [];
-            global.client.handleReaction.push({
-                type: "autodl_confirm",
-                name: module.exports.config.name,
-                messageID: info.messageID,
-                author: event.senderID,
-                url: content,
-                site
-            });
-        }
-    );
-};
+        const base = await getBaseUrl();
+        const apiUrl = `${base}/api/download/video?link=${encodeURIComponent(link)}`;
+        const response = await axios({
+          method: 'get',
+          url: apiUrl,
+          responseType: 'arraybuffer',
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
+          }
+        });
 
-// -------------------------
-// ❤️ Reaction Handler
-// -------------------------
-module.exports.handleReaction = async function ({ api, event, handleReaction }) {
-    try {
-        if (handleReaction.type !== "autodl_confirm") return;
+        fs.writeFileSync(filePath, Buffer.from(response.data));
+        if (fs.statSync(filePath).size < 1000) {
+        throw new Error("Invalid video data.");
+      }
 
-        // Anyone can react now
-        const reaction = event.reaction;
-        if (reaction !== "❤") return;
+        api.setMessageReaction("✅", event.messageID, () => {}, true);
+        const msgBody = `• 𝐏𝐥𝐚𝐭𝐟𝐨𝐫𝐦: ${platform}\n• 𝐇𝐞𝐫𝐞'𝐬 𝐲𝐨𝐮𝐫 𝐯𝐢𝐝𝐞𝐨 𝐛𝐚𝐛𝐲 <😘`;
+        return api.sendMessage( { body: msgBody,
+        attachment: fs.createReadStream(filePath) },
+        event.threadID, () => { if (fs.existsSync(filePath)) fs.unlinkSync(filePath); },  event.messageID );
 
-        // Edit confirmation message to show downloading
-        api.editMessage(`⬇️ Downloading...`, handleReaction.messageID);
-
-        const videoURL = handleReaction.url;
-        const site = handleReaction.site;
-
-        // Download using alldown
-        const data = await alldown(videoURL);
-        if (!data || !data.url) {
-            api.sendMessage(`❌ Failed to fetch download link!`, event.threadID);
-            return;
-        }
-
-        const title = data.title || "video";
-        const dlUrl = data.url;
-
-        // Download buffer
-        const buffer = (await axios.get(dlUrl, { responseType: "arraybuffer" })).data;
-        const safeTitle = title.replace(/[^\w\s]/gi, "_");
-        const filePath = path.join(__dirname, "cache", `${safeTitle}.mp4`);
-        fs.writeFileSync(filePath, buffer);
-
-        // Send downloaded file
-        api.sendMessage(
-            {
-                body: `🎀 Download Complete!\n📍 Platform: ${site}\n🎬 Title: ${title}`,
-                attachment: fs.createReadStream(filePath)
-            },
-            event.threadID,
-            () => {
-                fs.unlinkSync(filePath);
-                // Remove the "Downloading" message
-                api.unsendMessage(handleReaction.messageID);
-            }
-        );
-
-    } catch (e) {
-        console.log("autodl reaction error:", e);
-        api.sendMessage("❌ Download failed!", event.threadID);
+      } catch (err) {
+        console.error("AutoDL Error:", err.message);
+        api.setMessageReaction("❌", event.messageID, () => {}, true);
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      }
     }
+  },
 };

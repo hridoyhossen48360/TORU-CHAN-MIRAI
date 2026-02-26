@@ -1,51 +1,48 @@
-module.exports.config = {
-  name: "birthday",
-  version: "1.0.0",
-  hasPermssion: 0,
-  credits: "ChatGPT for rX Abdullah",
-  description: "Shows birthday countdown or wishes",
-  usePrefix: true,
-  commandCategory: "System",
-  cooldowns: 5
+const axios = require("axios");
+
+const mahmhd = async () => {
+  const base = await axios.get("https://raw.githubusercontent.com/mahmudx7/HINATA/main/baseApiUrl.json");
+  return base.data.mahmud;
 };
 
-module.exports.run = async ({ api, event }) => {
-  const fs = global.nodemodule["fs-extra"];
-  const request = global.nodemodule["request"];
+/**
+* @author MahMUD
+* @author: do not delete it
+*/
 
-  const now = new Date();
-  let targetYear = now.getFullYear();
-  const birthMonth = 8;
-  const birthDate = 26;
-  const birthday = new Date(targetYear, birthMonth, birthDate, 0, 0, 0);
+module.exports = {
+  config: {
+    name: "birthday",
+    aliases: ["wish"],
+    version: "1.7",
+    role: 0,
+    author: "MahMUD",
+    category: "Tag Fun",
+    countDown: 5,
+    guide: { en: "{p}{n} @mention" },
+  },
 
-  if (now > birthday) targetYear++;
+  onStart: async function ({ api, event }) {
+    const mention = Object.keys(event.mentions);
+    if (mention.length === 0) {
+      return api.sendMessage("❌ You need to tag someone to wish!", event.threadID, event.messageID);
+    }
 
-  const target = new Date(targetYear, birthMonth, birthDate);
-  const t = target - now;
+    const taggedUserName = event.mentions[mention[0]].replace('@', '');
 
-  const seconds = Math.floor((t / 1000) % 60);
-  const minutes = Math.floor((t / 1000 / 60) % 60);
-  const hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-  const days = Math.floor(t / (1000 * 60 * 60 * 24));
+    try {
+      const baseApi = await mahmhd();
+      const apiUrl = `${baseApi}/api/wish/font3?taggedUserName=${encodeURIComponent(taggedUserName)}`;
+      const response = await axios.get(apiUrl);
+      const data = response.data;
 
-  const imageURL = "https://i.imgur.com/oEh5VEx.jpeg";
-  const link = "\n\n🔗 m.me/61587127028066";
-
-  const send = (msg) => {
-    const callback = () => api.sendMessage({
-      body: msg,
-      attachment: fs.createReadStream(__dirname + "/cache/birthday.jpg")
-    }, event.threadID, () => fs.unlinkSync(__dirname + "/cache/birthday.jpg"), event.messageID);
-
-    request(encodeURI(imageURL))
-      .pipe(fs.createWriteStream(__dirname + "/cache/birthday.jpg"))
-      .on("close", () => callback());
-  };
-
-  if (days === 0 && hours === 0 && minutes === 0 && seconds <= 59) {
-    return send(`🎉 আজ kakashi  এর জন্মদিন!\nসবাই উইশ করো 🥳💙\n📅 16 December,2006 🎂${link}`);
-  }
-
-  return send(`📅 Kakashi এর জন্মদিন আসতে বাকি:\n\n⏳ ${days} দিন\n🕒 ${hours} ঘণ্টা\n🕑 ${minutes} মিনিট\n⏱️ ${seconds} সেকেন্ড${link}`);
+      if (data.status === "success") {
+        api.sendMessage(data.response, event.threadID, event.messageID);
+      } else {
+        api.sendMessage("❌ Failed to send the birthday wish. Please try again later.", event.threadID, event.messageID);
+      }
+    } catch (err) {
+      api.sendMessage(`❌ Something went wrong: ${err.message}`, event.threadID, event.messageID);
+    }
+  },
 };

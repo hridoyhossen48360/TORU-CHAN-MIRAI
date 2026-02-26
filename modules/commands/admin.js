@@ -1,228 +1,138 @@
-module.exports.config = {
-	name: "admin",
-	version: "1.0.5",
-	hasPermssion: 0,
-	credits: "rX",
-	description: "Enable or disable admin-only command mode",
-	commandCategory: "Admin",
-	usages: "Toggle admin / moderator only mode",
-	cooldowns: 0,
-	usePrefix: false,
-	images: [],
-	dependencies: {
-		"fs-extra": ""
-	}
-};
+const { config } = global.GoatBot;
+const { writeFileSync } = require("fs-extra");
 
-module.exports.languages = {
-	"vi": {
-		"notHavePermssion": '⚠️ You do not have permission to use "%1"',
-		"addedNewAdmin": '[ ADD NEW ADMIN ]\n────────────────────\n📝 Successfully added %1 user(s) as bot admin\n\n%2\n────────────────────\n[⏰] → Time: %3',
-		"removedAdmin": '[ REMOVE ADMIN ]\n────────────────────\n📝 Successfully removed %1 admin(s)\n\n%2\n────────────────────\n[⏰] → Time: %3'
-	},
-	"en": {
-		"listAdmin": '[Admin] Admin list:\n\n%1',
-		"notHavePermssion": '[Admin] You do not have permission to use "%1"',
-		"addedNewAdmin": '[Admin] Added %1 admin(s):\n\n%2',
-		"removedAdmin": '[Admin] Removed %1 admin(s):\n\n%2'
-	}
-};
+module.exports = {
+        config: {
+                name: "admin",
+                version: "1.7",
+                author: "MahMUD",
+                countDown: 5,
+                role: 2,
+                description: {
+                        bn: "বোট অ্যাডমিন যোগ, অপসারণ বা তালিকা দেখুন",
+                        en: "Add, remove, or list bot admins",
+                        vi: "Thêm, xóa, sửa quyền admin"
+                },
+                category: "Group",
+                guide: {
+                        bn: '   {pn} add [ID | @tag]: অ্যাডমিন যোগ করতে\n   {pn} remove [ID | @tag]: অ্যাডমিন সরাতে\n   {pn} list: অ্যাডমিন লিস্ট দেখতে',
+                        en: '   {pn} [add | -a] <uid | @tag>: Add admin role\n   {pn} [remove | -r] <uid | @tag>: Remove admin role\n   {pn} [list | -l]: List all admins',
+                        vi: '   {pn} [add | -a] <uid | @tag>: Thêm quyền admin\n   {pn} [remove | -r] <uid | @tag>: Xóa quyền admin\n   {pn} [list | -l]: Liệt kê danh sách admin'
+                }
+        },
 
-module.exports.onLoad = function () {
-	const { writeFileSync, existsSync } = require("fs-extra");
-	const { resolve } = require("path");
-	const path = resolve(__dirname, "data", "dataAdbox.json");
+        langs: {
+                bn: {
+                        added: "✅ | সফলভাবে %1 জনকে অ্যাডমিন করা হয়েছে:\n%2",
+                        alreadyAdmin: "\n⚠️ | %1 জন আগে থেকেই অ্যাডমিন ছিল:\n%2",
+                        missingIdAdd: "⚠️ | বেবি, অ্যাডমিন করতে আইডি দিন অথবা কাউকে ট্যাগ করুন!",
+                        removed: "✅ | সফলভাবে %1 জনের অ্যাডমিন পারমিশন সরানো হয়েছে:\n%2",
+                        notAdmin: "⚠️ | %1 জন অ্যাডমিন তালিকায় ছিল না:\n%2",
+                        missingIdRemove: "⚠️ | বেবি, অ্যাডমিন সরাতে আইডি দিন অথবা কাউকে ট্যাগ করুন!",
+                        listAdmin: "👑 | বোট অ্যাডমিন তালিকা:\n\n%1"
+                },
+                en: {
+                        added: "✅ | Added admin role for %1 users:\n%2",
+                        alreadyAdmin: "\n⚠️ | %1 users already have admin role:\n%2",
+                        missingIdAdd: "⚠️ | Please enter ID or tag user to add admin role",
+                        removed: "✅ | Removed admin role of %1 users:\n%2",
+                        notAdmin: "⚠️ | %1 users don't have admin role:\n%2",
+                        missingIdRemove: "⚠️ | Please enter ID or tag user to remove admin role",
+                        listAdmin: "👑 | List of admins:\n\n%1"
+                },
+                vi: {
+                        added: "✅ | Đã thêm quyền admin cho %1 người dùng:\n%2",
+                        alreadyAdmin: "\n⚠️ | %1 người dùng đã có quyền admin:\n%2",
+                        missingIdAdd: "⚠️ | Vui lòng nhập ID hoặc tag để thêm admin",
+                        removed: "✅ | Đã xóa quyền admin của %1 người dùng:\n%2",
+                        notAdmin: "⚠️ | %1 người dùng không có quyền admin:\n%2",
+                        missingIdRemove: "⚠️ | Vui lòng nhập ID hoặc tag để xóa admin",
+                        listAdmin: "👑 | Danh sách admin:\n\n%1"
+                }
+        },
 
-	if (!existsSync(path)) {
-		const obj = { adminbox: {} };
-		writeFileSync(path, JSON.stringify(obj, null, 4));
-	} else {
-		const data = require(path);
-		if (!data.hasOwnProperty("adminbox")) data.adminbox = {};
-		writeFileSync(path, JSON.stringify(data, null, 4));
-	}
-};
+        onStart: async function ({ api, message, args, usersData, event, getLang }) {
+                const action = args[0]?.toLowerCase();
+                const { threadID, messageID } = event;
 
-module.exports.run = async function ({ api, event, args, Users, permssion, getText, Currencies }) {
-	const fs = require("fs-extra");
-	const axios = require("axios");
-	const moment = require("moment-timezone");
+                switch (action) {
+                        case "add":
+                        case "-a": {
+                                if (args[1] || event.messageReply) {
+                                        let uids = [];
+                                        if (Object.keys(event.mentions).length > 0)
+                                                uids = Object.keys(event.mentions);
+                                        else if (event.messageReply)
+                                                uids.push(event.messageReply.senderID);
+                                        else
+                                                uids = args.filter(arg => !isNaN(arg));
 
-	const timeNow = moment.tz("Asia/Dhaka").format("DD/MM/YYYY - HH:mm:ss");
-	const senderName = await Users.getNameUser(event.senderID);
+                                        const notAdminIds = [];
+                                        const adminIds = [];
+                                        for (const uid of uids) {
+                                                if (config.adminBot.includes(uid))
+                                                        adminIds.push(uid);
+                                                else
+                                                        notAdminIds.push(uid);
+                                        }
 
-	const { PREFIX } = global.config;
-	const { threadID, messageID, mentions, senderID } = event;
-	const { configPath } = global.client;
-	const { throwError } = global.utils;
+                                        config.adminBot.push(...notAdminIds);
+                                        const getNames = await Promise.all(uids.map(uid => usersData.getName(uid).then(name => ({ uid, name }))));
+                                        writeFileSync(global.client.dirConfig, JSON.stringify(config, null, 2));
 
-	async function streamURL(url, mime = "jpg") {
-		const dest = `${__dirname}/cache/${Date.now()}.${mime}`;
-		const downloader = require("image-downloader");
-		const fse = require("fs-extra");
+                                        const response = (notAdminIds.length > 0 ? getLang("added", notAdminIds.length, getNames.filter(u => notAdminIds.includes(u.uid)).map(({ uid, name }) => `• ${name} (${uid})`).join("\n")) : "")
+                                                + (adminIds.length > 0 ? getLang("alreadyAdmin", adminIds.length, getNames.filter(u => adminIds.includes(u.uid)).map(({ uid, name }) => `• ${name} (${uid})`).join("\n")) : "");
 
-		await downloader.image({ url, dest });
-		setTimeout(j => fse.unlinkSync(j), 60 * 1000, dest);
-		return fse.createReadStream(dest);
-	}
+                                        return api.sendMessage(response, threadID, messageID);
+                                } else {
+                                        return api.sendMessage(getLang("missingIdAdd"), threadID, messageID);
+                                }
+                        }
 
-	const allowedUserIDs = global.config.NDH.map(id => id.toString());
-	const senderIDStr = senderID.toString();
-	const threadSetting = global.data.threadData.get(threadID) || {};
-	const prefix = threadSetting.PREFIX || PREFIX;
+                        case "remove":
+                        case "-r": {
+                                if (args[1] || event.messageReply) {
+                                        let uids = [];
+                                        if (Object.keys(event.mentions).length > 0)
+                                                uids = Object.keys(event.mentions);
+                                        else if (event.messageReply)
+                                                uids.push(event.messageReply.senderID);
+                                        else
+                                                uids = args.filter(arg => !isNaN(arg));
 
-	const content = args.slice(1);
+                                        const notAdminIds = [];
+                                        const adminIds = [];
+                                        for (const uid of uids) {
+                                                if (config.adminBot.includes(uid))
+                                                        adminIds.push(uid);
+                                                else
+                                                        notAdminIds.push(uid);
+                                        }
 
-	if (args.length === 0) {
-		return api.sendMessage(
-			`[ ADMIN CONFIGURATION ]\n──────────────────\n` +
-			`${prefix}admin add → Add a new bot admin\n` +
-			`${prefix}admin remove → Remove a bot admin\n` +
-			`${prefix}admin list → Show admin list\n` +
-			`${prefix}admin qtvonly → Toggle group admin only mode\n` +
-			`${prefix}admin only → Toggle bot admin only mode\n` +
-			`${prefix}admin echo → Repeat your message\n` +
-			`${prefix}admin fast → Check bot internet speed\n` +
-			`${prefix}admin create [name] → Create a new command file\n` +
-			`${prefix}admin del [name] → Delete a command file\n` +
-			`${prefix}admin rename old => new → Rename command file\n` +
-			`${prefix}admin ping → Check bot response time\n` +
-			`${prefix}admin offbot → Shutdown bot\n` +
-			`${prefix}admin reload [time] → Restart bot\n` +
-			`${prefix}admin resetmoney → Reset all users money\n` +
-			`${prefix}admin ship [name] → Share command module\n` +
-			`──────────────────\n` +
-			`Usage: ${prefix}admin + option`,
-			threadID,
-			messageID
-		);
-	}
+                                        for (const uid of adminIds)
+                                                config.adminBot.splice(config.adminBot.indexOf(uid), 1);
 
-	delete require.cache[require.resolve(configPath)];
-	const config = require(configPath);
+                                        const getNames = await Promise.all(uids.map(uid => usersData.getName(uid).then(name => ({ uid, name }))));
+                                        writeFileSync(global.client.dirConfig, JSON.stringify(config, null, 2));
 
-	switch (args[0]) {
+                                        const response = (adminIds.length > 0 ? getLang("removed", adminIds.length, getNames.filter(u => adminIds.includes(u.uid)).map(({ uid, name }) => `• ${name} (${uid})`).join("\n")) : "")
+                                                + (notAdminIds.length > 0 ? getLang("notAdmin", notAdminIds.length, getNames.filter(u => notAdminIds.includes(u.uid)).map(({ uid, name }) => `• ${name} (${uid})`).join("\n")) : "");
 
-		case "list": {
-	const listAdmin = config.ADMINBOT || [];
-	let msg = [];
+                                        return api.sendMessage(response, threadID, messageID);
+                                } else {
+                                        return api.sendMessage(getLang("missingIdRemove"), threadID, messageID);
+                                }
+                        }
 
-	for (const id of listAdmin) {
-		if (!id) continue;
+                        case "list":
+                        case "-l": {
+                                const getNames = await Promise.all(config.adminBot.map(uid => usersData.getName(uid).then(name => ({ uid, name }))));
+                                const listMsg = getLang("listAdmin", getNames.map(({ uid, name }) => `• ${name}\n  └ ID: ${uid}`).join("\n\n"));
+                                return api.sendMessage(listMsg, threadID, messageID);
+                        }
 
-		const name = await Users.getNameUser(id);
-
-		msg.push(
-`ᰔ ${name} ᰔ
- •╰┈➤(${id})`
-		);
-	}
-
-	const text =
-`𝐋𝐈𝐒𝐓 𝐎𝐅 𝐀𝐃𝐌𝐈𝐍 ᰔ
-___________________
-𝐀𝐃𝐌𝐈𝐍: ${global.config.ADMIN_NAME || ""}  >🎀
-𝐅𝐁: ${global.config.FACEBOOK_ADMIN || ""}
-_____________________________
-𝐎𝐏𝐎𝐑𝐄𝐓𝐎𝐑𝐒
-
-${msg.join("\n\n")}`;
-
-	api.sendMessage(text, threadID, (err, info) => {
-		if (!err) {
-			global.client.handleReply.push({
-				name: "deleteAdmin",
-				messageID: info.messageID,
-				author: senderID,
-				data: { listAdmin }
-			});
-		}
-	});
-	break;
-}
-
-		case "add": {
-			if (!allowedUserIDs.includes(senderIDStr))
-				return api.sendMessage("⚠️ Main admin permission required", threadID, messageID);
-
-			if (event.type === "message_reply")
-				content[0] = event.messageReply.senderID;
-
-			if (mentions && Object.keys(mentions).length > 0) {
-				for (const id of Object.keys(mentions)) {
-					config.ADMINBOT.push(id);
-				}
-				fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
-				return api.sendMessage("✅ Admin added successfully", threadID);
-			}
-			break;
-		}
-
-		case "rm":
-		case "delete": {
-			if (!allowedUserIDs.includes(senderIDStr))
-				return api.sendMessage("⚠️ Main admin permission required", threadID, messageID);
-
-			const uid = content[0];
-			const index = config.ADMINBOT.indexOf(uid);
-			if (index !== -1) {
-				config.ADMINBOT.splice(index, 1);
-				fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
-				return api.sendMessage("✅ Admin removed successfully", threadID);
-			}
-			break;
-		}
-
-		case "qtvonly": {
-			const pathData = require("path").resolve(__dirname, "data", "dataAdbox.json");
-			const database = require(pathData);
-
-			if (permssion < 1)
-				return api.sendMessage("⚠️ Group admin permission required", threadID);
-
-			database.adminbox[threadID] = !database.adminbox[threadID];
-			fs.writeFileSync(pathData, JSON.stringify(database, null, 4));
-
-			return api.sendMessage(
-				database.adminbox[threadID]
-					? "✅ Group admin-only mode enabled"
-					: "✅ Group admin-only mode disabled",
-				threadID
-			);
-		}
-
-		case "only": {
-			if (permssion !== 3)
-				return api.sendMessage("⚠️ Bot admin permission required", threadID);
-
-			config.adminOnly = !config.adminOnly;
-			fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
-
-			return api.sendMessage(
-				config.adminOnly
-					? "✅ Bot admin-only mode enabled"
-					: "✅ Bot admin-only mode disabled",
-				threadID
-			);
-		}
-
-		case "echo": {
-			return api.sendMessage(args.slice(1).join(" "), threadID);
-		}
-
-		case "ping": {
-			return api.sendMessage(`📶 Ping: ${Date.now() % 100} ms`, threadID);
-		}
-
-		case "offbot": {
-			if (!allowedUserIDs.includes(senderIDStr))
-				return api.sendMessage("⚠️ Main admin permission required", threadID);
-
-			api.sendMessage("👋 Bot shutting down...", threadID, () => process.exit(0));
-			break;
-		}
-
-		default:
-			return throwError(this.config.name, threadID, messageID);
-	}
+                        default:
+                                return message.SyntaxError();
+                }
+        }
 };

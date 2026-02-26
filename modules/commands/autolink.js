@@ -1,68 +1,83 @@
 const axios = require("axios");
-const fs = require("fs-extra");
+const fs = require("fs");
 const path = require("path");
-const { alldown } = require("rx-dawonload");
 
-module.exports.config = {
-    name: "autolink",
-    version: "2.4.0",
-    credits: "MOHAMMAD AKASH",
-    hasPermission: 0,
-    description: "Auto download video with text + reaction",
-    usePrefix: false,
-    commandCategory: "Utility",
-    cooldowns: 2
-};
+module.exports = {
+    config: {
+        name: "autolink",
+        version: "1.3",
+        author: "MOHAMMAD AKASH",
+        role: 0,
+        shortDescription: "Auto-download videos via Akash-video-downloader API",
+        category: "Media",
+        countDown: 3,
+    },
 
-module.exports.run = async function () {};
+    onStart: async function({ api, event }) {
+        // Required by Goat Bot v2
+    },
 
-module.exports.handleEvent = async function ({ api, event }) {
-    try {
-        const url = event.body?.trim();
-        if (!url || !url.startsWith("http")) return;
+    onChat: async function({ api, event }) {
+        const threadID = event.threadID;
+        const messageID = event.messageID;
+        const message = event.body || "";
 
-        // ⏳ downloading reaction
-        api.setMessageReaction("⏳", event.messageID, () => {}, true);
+        const linkMatches = message.match(/(https?:\/\/[^\s]+)/g);
+        if (!linkMatches || linkMatches.length === 0) return;
 
-        // Detect Platform
-        let site = "Unknown";
-        if (url.includes("youtube.com") || url.includes("youtu.be")) site = "YouTube";
-        else if (url.includes("tiktok.com")) site = "TikTok";
-        else if (url.includes("instagram.com")) site = "Instagram";
-        else if (url.includes("facebook.com")) site = "Facebook";
+        const uniqueLinks = [...new Set(linkMatches)];
 
-        // Fetch download info
-        const data = await alldown(url);
-        if (!data?.url) {
-            api.setMessageReaction("❌", event.messageID, () => {}, true);
-            return;
+        api.setMessageReaction("⏳", messageID, () => {}, true);
+
+        let successCount = 0;
+        let failCount = 0;
+
+        for (const url of uniqueLinks) {
+            try {
+                const response = await axios.post(
+                    "https://akash-video-downloader.onrender.com/download",
+                    { url },
+                    { responseType: "stream" }
+                );
+
+                const tempFile = path.join(__dirname, `temp_${Date.now()}.mp4`);
+                const writer = fs.createWriteStream(tempFile);
+                response.data.pipe(writer);
+
+                await new Promise((resolve, reject) => {
+                    writer.on("finish", resolve);
+                    writer.on("error", reject);
+                });
+
+                const stats = fs.statSync(tempFile);
+                const fileSizeInMB = stats.size / (1024 * 1024);
+
+                if (fileSizeInMB > 25) {
+                    fs.unlinkSync(tempFile);
+                    failCount++;
+                    continue;
+                }
+
+                await api.sendMessage(
+                    {
+                        body: `📥 Video downloaded successfully\n━━━━━━━━━━━━━━━`,
+                        attachment: fs.createReadStream(tempFile)
+                    },
+                    threadID,
+                    () => fs.unlinkSync(tempFile)
+                );
+
+                successCount++;
+
+            } catch (err) {
+                failCount++;
+            }
         }
 
-        const title = data.title || "video";
-        const dlUrl = data.url;
+        const finalReaction =
+            successCount > 0 && failCount === 0 ? "✅" :
+            successCount > 0 ? "⚠️" : "❌";
 
-        const buffer = (
-            await axios.get(dlUrl, { responseType: "arraybuffer" })
-        ).data;
-
-        const safeTitle = title.replace(/[^\w\s]/gi, "_");
-        const filePath = path.join(__dirname, "cache", `${safeTitle}.mp4`);
-
-        fs.writeFileSync(filePath, buffer);
-
-        // ✅ done reaction
-        api.setMessageReaction("✅", event.messageID, () => {}, true);
-
-        // Send video + text
-        const messageBody = `🎀 𝗗ᴏᴡɴʟᴏᴀᴅ 𝗖ᴏᴍᴘʟᴇᴛᴇ!\n📍 𝗣ʟᴀᴛғᴏʀᴍ: ${site}\n🎬 𝗧ɪᴛʟᴇ: ${title}`;
-        api.sendMessage(
-            { body: messageBody, attachment: fs.createReadStream(filePath) },
-            event.threadID,
-            () => fs.unlinkSync(filePath)
-        );
-
-    } catch (e) {
-        console.log("autodl error:", e);
-        api.setMessageReaction("❌", event.messageID, () => {}, true);
+        api.setMessageReaction(finalReaction, messageID, () => {}, true);
     }
 };
